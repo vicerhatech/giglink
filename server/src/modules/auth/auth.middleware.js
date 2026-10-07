@@ -39,9 +39,13 @@ export async function requireAuthenticatedUser(request, _response, next) {
       throw new AuthServiceError("Invalid or expired authentication token.", 401);
     }
 
+    if (typeof payload.sub !== "string" || !payload.sub) {
+      throw new AuthServiceError("Invalid or expired authentication token.", 401);
+    }
+
     const user = await User.findById(payload.sub);
     if (!user) {
-      throw new AuthServiceError("Authentication account no longer exists.", 401);
+      throw new AuthServiceError("Invalid or expired authentication token.", 401);
     }
 
     if (user.accountStatus === "suspended") {
