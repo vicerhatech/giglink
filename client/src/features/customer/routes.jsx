@@ -1,4 +1,5 @@
 import { CreateGigPage, CustomerDashboardLayout, ManageGigPage, MyGigsPage } from "./CustomerPages";
+import { ApplicantReviewPage } from "./ApplicantReviewPage";
 
 /** Route objects for Captain integration into client/src/app/router.jsx. */
 export const customerRoutes = {
@@ -7,8 +8,9 @@ export const customerRoutes = {
   children: [
     { path: "gigs", element: <MyGigsPage /> },
     { path: "gigs/new", element: <CreateGigPage /> },
+    { path: "gigs/:id/applicants", element: <ApplicantReviewPage /> },
     { path: "gigs/:id", element: <ManageGigPage /> },
   ],
 };
 
-export { CreateGigPage, CustomerDashboardLayout, ManageGigPage, MyGigsPage };
+export { ApplicantReviewPage, CreateGigPage, CustomerDashboardLayout, ManageGigPage, MyGigsPage };
