@@ -14,3 +14,6 @@ export {
   createOrRenewTalentSubscription,
   hasActiveTalentSubscription,
 } from "./services/subscription.service.js";
+export { createGigPostingPaymentService, GigPostingPaymentError } from "./services/gig-posting-payment.service.js";
+export { createPaystackClient, nairaToKobo, PaystackRequestError } from "./services/paystack.client.js";
+export { createGigPostingPaymentRouter } from "./routes/gig-posting-payment.routes.js";
