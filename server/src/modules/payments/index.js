@@ -17,3 +17,10 @@ export {
 export { createGigPostingPaymentService, GigPostingPaymentError } from "./services/gig-posting-payment.service.js";
 export { createPaystackClient, nairaToKobo, PaystackRequestError } from "./services/paystack.client.js";
 export { createGigPostingPaymentRouter } from "./routes/gig-posting-payment.routes.js";
+export {
+  canBrowsePaidGigs,
+  createTalentSubscriptionPaymentService,
+  TalentSubscriptionPaymentError,
+} from "./services/talent-subscription-payment.service.js";
+export { createPaidGigSubscriptionRequirementService } from "./services/subscription-requirement.service.js";
+export { createTalentSubscriptionPaymentRouter } from "./routes/talent-subscription-payment.routes.js";
