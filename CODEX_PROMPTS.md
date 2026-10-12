@@ -12,7 +12,7 @@ Copy this prompt and replace the placeholders only.
 You are working inside the GigLink repository.
 
 Read AGENTS.md, README.md, and my assigned task file before changing anything.
-My assigned task file is: <TASK_FILE>
+My assigned task file is: /doc/TASK_STUDENT_1.md
 My current task is: <TASK_ID>
 
 Implement ONLY <TASK_ID>.
