@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { TalentSubscriptionPrompt } from "../payments/TalentSubscriptionPrompt";
 
 function formatNaira(value) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(value);
@@ -58,6 +59,7 @@ export function BrowseGigsPage() {
       {subscriptionRequired && <section className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-5 text-amber-950">
         <h2 className="font-bold">Paid-gig access requires a subscription</h2>
         <p className="mt-1">Subscribe for ₦5,000 per month to browse paid gigs. Free gigs remain available.</p>
+        <TalentSubscriptionPrompt />
       </section>}
       {error && <p className="mt-6 rounded bg-red-50 p-3 text-red-700" role="alert">{error}</p>}
       {!error && gigs.length === 0 && <p className="mt-6 text-slate-600">No gigs are available right now.</p>}

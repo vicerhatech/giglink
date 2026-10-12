@@ -1,8 +1,9 @@
 import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { GigForm } from "./GigForm";
+import { GigForm } from "./GigForm.jsx";
 import { apiMessage, cancelGig, createGigDraft, getMyGig, listMyGigs, updateGig } from "./gigApi";
 import { gigToForm } from "./gigForm";
+import { GigPostingPaymentButton } from "../payments/GigPostingPaymentButton";
 import "./customer.css";
 
 const money = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 });
@@ -33,5 +34,6 @@ export function ManageGigPage() {
   if (!gig && !error) return <p>Loading gig…</p>;
   if (!gig) return <section><Link to="/customer/gigs">Back to My gigs</Link><LayoutMessage error={error} /></section>;
   const isCancelled = gig.publicationStatus === "cancelled";
-  return <section><div className="customer-page-heading"><div><Link to="/customer/gigs">← My gigs</Link><h1>Manage {gig.title}</h1><p><Status>{gig.gigType.toUpperCase()}</Status> <Status>{gig.publicationStatus}</Status> {gig.gigType === "paid" && <>Talent payment: {money.format(gig.paymentRange.min)} – {money.format(gig.paymentRange.max)}</>}</p></div>{!isCancelled && <div className="customer-actions"><Link className="customer-primary customer-link" to={`/customer/gigs/${id}/applicants`}>Review applicants</Link><button className="customer-danger" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling…" : "Cancel gig"}</button></div>}</div><LayoutMessage error={error} success={success} />{isCancelled ? <div className="customer-empty"><h2>This gig is cancelled</h2><p>Cancelled gigs are retained for your records and cannot be edited here.</p><button onClick={() => navigate("/customer/gigs")}>Return to My gigs</button></div> : <GigForm key={gig.updatedAt || gig._id} initialValue={gigToForm(gig)} onSubmit={save} submitLabel="Save changes" />}</section>;
+  const requiresPostingPayment = gig.publicationStatus === "draft" && gig.postingPaymentStatus === "unpaid";
+  return <section><div className="customer-page-heading"><div><Link to="/customer/gigs">← My gigs</Link><h1>Manage {gig.title}</h1><p><Status>{gig.gigType.toUpperCase()}</Status> <Status>{gig.publicationStatus}</Status> {gig.gigType === "paid" && <>Talent payment: {money.format(gig.paymentRange.min)} – {money.format(gig.paymentRange.max)}</>}</p></div>{!isCancelled && <div className="customer-actions"><Link className="customer-primary customer-link" to={`/customer/gigs/${id}/applicants`}>Review applicants</Link><button className="customer-danger" disabled={cancelling} onClick={cancel}>{cancelling ? "Cancelling…" : "Cancel gig"}</button></div>}</div><LayoutMessage error={error} success={success} />{requiresPostingPayment && <section className="customer-banner"><p>This {gig.gigType} gig is a draft. Pay {money.format(gig.postingFee)} to publish it.</p><GigPostingPaymentButton gigId={gig._id}>Pay {money.format(gig.postingFee)} posting fee</GigPostingPaymentButton></section>}{isCancelled ? <div className="customer-empty"><h2>This gig is cancelled</h2><p>Cancelled gigs are retained for your records and cannot be edited here.</p><button onClick={() => navigate("/customer/gigs")}>Return to My gigs</button></div> : <GigForm key={gig.updatedAt || gig._id} initialValue={gigToForm(gig)} onSubmit={save} submitLabel="Save changes" />}</section>;
 }
