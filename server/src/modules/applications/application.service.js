@@ -156,6 +156,15 @@ export function createApplicationService({
 
   async function withdrawApplication({ talent, applicationId }) {
     const talentId = assertTalent(talent);
+
+    // Authorize before opening the transaction. MongoDB's transaction retry
+    // machinery must not be asked to retry an expected authorization failure.
+    const existing = await store.findById(applicationId);
+    if (!existing) throw applicationError("Application not found.", 404);
+    if (!idMatches(existing.talentId, talentId)) {
+      throw applicationError("You can only withdraw your own applications.", 403);
+    }
+
     return store.withTransaction(async (transaction) => {
       const application = await store.findById(applicationId, transaction);
       if (!application) throw applicationError("Application not found.", 404);
