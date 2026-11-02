@@ -25,6 +25,14 @@ function normalizeGenres(genres) {
   return normalized;
 }
 
+function normalizeCity(city) {
+  if (city === undefined) return "";
+  if (typeof city !== "string") throw profileError("City must be a string.");
+  const normalized = city.trim();
+  if (normalized.length > 120) throw profileError("City must be 120 characters or fewer.");
+  return normalized;
+}
+
 function validateProfile(values) {
   if (!["instrumentalist", "backup_vocalist"].includes(values.talentType)) {
     throw profileError("Talent type must be instrumentalist or backup_vocalist.");
@@ -53,7 +61,7 @@ export async function saveTalentProfile(talentUserId, input) {
     yearsExperience: Number(input.yearsExperience),
     profilePhotoUrl: typeof input.profilePhotoUrl === "string" ? input.profilePhotoUrl.trim() : "",
     genres,
-    city: typeof input.city === "string" ? input.city.trim() : "",
+    city: normalizeCity(input.city),
   };
 
   validateProfile(values);

@@ -1,4 +1,5 @@
 import { getTalentProfile, saveTalentProfile, saveTalentProfilePhoto } from "./talentProfile.service.js";
+import { serializeUser } from "../users/user.serializer.js";
 
 function getTalentUserId(request) {
   if (!request.user) {
@@ -22,7 +23,7 @@ export async function getProfile(request, response, next) {
     response.status(200).json({
       success: true,
       message: "Talent profile retrieved.",
-      data: { profile },
+      data: { profile, user: serializeUser(request.user) },
     });
   } catch (error) {
     next(error);
