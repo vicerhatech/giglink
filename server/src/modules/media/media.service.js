@@ -37,5 +37,24 @@ export function createMediaService({ uploader = cloudinary.uploader } = {}) {
         stream.end(file.buffer);
       });
     },
+
+    async uploadProfilePhoto(file) {
+      if (!file) throw mediaError("A profile image is required.");
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.mimetype)) {
+        throw mediaError("Only JPEG, PNG, or WebP images can be uploaded.");
+      }
+      configureCloudinary();
+
+      return new Promise((resolve, reject) => {
+        const stream = uploader.upload_stream(
+          { resource_type: "image", folder: "giglink/profile-photos" },
+          (error, result) => {
+            if (error) return reject(mediaError("Profile photo upload failed. Please try again.", 502));
+            resolve({ profilePhotoUrl: result.secure_url, profilePhotoPublicId: result.public_id });
+          },
+        );
+        stream.end(file.buffer);
+      });
+    },
   };
 }

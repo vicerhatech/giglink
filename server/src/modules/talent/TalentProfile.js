@@ -35,6 +35,25 @@ const talentProfileSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    profilePhotoPublicId: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+    genres: {
+      type: [String],
+      default: [],
+      validate: {
+        validator: (genres) => Array.isArray(genres) && genres.length <= 12 && genres.every((genre) => genre.length <= 80),
+        message: "Provide up to 12 genres, each no longer than 80 characters.",
+      },
+    },
+    city: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 120,
+    },
   },
   { timestamps: true },
 );

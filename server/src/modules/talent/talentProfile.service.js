@@ -15,6 +15,16 @@ function normalizeInstruments(instruments) {
   return [...new Set(instruments.map((instrument) => String(instrument).trim()).filter(Boolean))];
 }
 
+function normalizeGenres(genres) {
+  if (genres === undefined) return undefined;
+  if (!Array.isArray(genres)) throw profileError("Genres must be an array.");
+  const normalized = [...new Set(genres.map((genre) => String(genre).trim()).filter(Boolean))];
+  if (normalized.length > 12 || normalized.some((genre) => genre.length > 80)) {
+    throw profileError("Provide up to 12 genres, each no longer than 80 characters.");
+  }
+  return normalized;
+}
+
 function validateProfile(values) {
   if (!["instrumentalist", "backup_vocalist"].includes(values.talentType)) {
     throw profileError("Talent type must be instrumentalist or backup_vocalist.");
@@ -35,12 +45,15 @@ export async function getTalentProfile(talentUserId) {
 
 export async function saveTalentProfile(talentUserId, input) {
   const instruments = normalizeInstruments(input.instruments) ?? [];
+  const genres = normalizeGenres(input.genres) ?? [];
   const values = {
     talentType: input.talentType,
     instruments,
     bio: typeof input.bio === "string" ? input.bio.trim() : "",
     yearsExperience: Number(input.yearsExperience),
     profilePhotoUrl: typeof input.profilePhotoUrl === "string" ? input.profilePhotoUrl.trim() : "",
+    genres,
+    city: typeof input.city === "string" ? input.city.trim() : "",
   };
 
   validateProfile(values);
@@ -50,4 +63,18 @@ export async function saveTalentProfile(talentUserId, input) {
     { $set: values, $setOnInsert: { userId: talentUserId } },
     { new: true, upsert: true, runValidators: true },
   );
+}
+
+export async function saveTalentProfilePhoto(talentUserId, photo) {
+  if (!photo?.profilePhotoUrl || !photo?.profilePhotoPublicId) {
+    throw profileError("A valid profile photo upload is required.");
+  }
+
+  const profile = await TalentProfile.findOneAndUpdate(
+    { userId: talentUserId },
+    { $set: { profilePhotoUrl: photo.profilePhotoUrl, profilePhotoPublicId: photo.profilePhotoPublicId } },
+    { new: true, runValidators: true },
+  );
+  if (!profile) throw profileError("Save your basic talent profile before uploading a photo.", 409);
+  return profile;
 }

@@ -17,8 +17,8 @@ export function GigDetailsPage() {
       .catch((requestError) => setError(requestError.response?.data?.message || "Could not load this gig."));
   }, [id]);
 
-  if (error) return <main className="mx-auto max-w-3xl p-6"><p className="rounded bg-red-50 p-3 text-red-700" role="alert">{error}</p></main>;
-  if (!gig) return <p className="p-6 text-slate-600">Loading gig…</p>;
+  if (error) return <main className="mx-auto max-w-3xl p-6"><section className="rounded-xl border border-red-200 bg-red-50 p-5 text-red-800" role="alert"><p>{error}</p><Link className="mt-3 inline-block font-semibold text-indigo-700" to="/talent/gigs">Back to gigs</Link></section></main>;
+  if (!gig) return <main className="mx-auto max-w-3xl p-6"><section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-600 shadow-sm" role="status">Loading gig...</section></main>;
 
   const paid = gig.gigType === "paid";
   return (

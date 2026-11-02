@@ -1,4 +1,4 @@
-import { getTalentProfile, saveTalentProfile } from "./talentProfile.service.js";
+import { getTalentProfile, saveTalentProfile, saveTalentProfilePhoto } from "./talentProfile.service.js";
 
 function getTalentUserId(request) {
   if (!request.user) {
@@ -40,4 +40,24 @@ export async function updateProfile(request, response, next) {
   } catch (error) {
     next(error);
   }
+}
+
+export function createProfilePhotoController(mediaService) {
+  return async function uploadProfilePhoto(request, response, next) {
+    try {
+      const talentUserId = getTalentUserId(request);
+      const photo = await mediaService.uploadProfilePhoto(request.file);
+      const profile = await saveTalentProfilePhoto(talentUserId, photo);
+      response.status(201).json({
+        success: true,
+        message: "Profile photo uploaded.",
+        data: {
+          profile,
+          photo: { url: photo.profilePhotoUrl, publicId: photo.profilePhotoPublicId },
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
