@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useNavigate, useParams } from "react-router-dom";
+import { Link, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { GigForm } from "./GigForm.jsx";
 import { apiMessage, cancelGig, createGigDraft, getMyGig, listMyGigs, updateGig } from "./gigApi";
@@ -13,7 +13,7 @@ function LayoutMessage({ error, success }) { return <>{error && <p className="cu
 function needsPostingPayment(gig) { return gig.publicationStatus === "draft" && gig.postingPaymentStatus === "unpaid"; }
 
 export function CustomerDashboardLayout() {
-  return <main className="customer-shell"><header className="customer-header"><Link to="/customer/gigs">GigLink Customer</Link><nav><NavLink to="/customer/gigs">My gigs</NavLink><NavLink to="/customer/gigs/new">Create gig</NavLink></nav></header><Outlet /></main>;
+  return <div className="customer-shell"><Outlet /></div>;
 }
 
 export function MyGigsPage() {
