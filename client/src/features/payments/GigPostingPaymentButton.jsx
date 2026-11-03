@@ -11,6 +11,7 @@ export function GigPostingPaymentButton({ gigId, children = "Pay posting fee" })
 
     try {
       const response = await api.post("/payments/gig-post/initialize", { gigId });
+      window.sessionStorage.setItem("giglink_posting_payment_gig_id", gigId);
       window.location.assign(response.data.data.authorizationUrl);
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Unable to initialize the posting payment.");

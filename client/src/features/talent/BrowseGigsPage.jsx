@@ -50,7 +50,7 @@ export function BrowseGigsPage() {
     loadGigs();
   }, []);
 
-  if (loading) return <p className="p-6 text-slate-600">Loading available gigs…</p>;
+  if (loading) return <main className="mx-auto max-w-5xl px-6 py-10"><section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-600 shadow-sm" role="status">Loading available gigs...</section></main>;
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
@@ -62,7 +62,7 @@ export function BrowseGigsPage() {
         <TalentSubscriptionPrompt />
       </section>}
       {error && <p className="mt-6 rounded bg-red-50 p-3 text-red-700" role="alert">{error}</p>}
-      {!error && gigs.length === 0 && <p className="mt-6 text-slate-600">No gigs are available right now.</p>}
+      {!error && gigs.length === 0 && <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5 text-slate-600"><h2 className="font-bold text-slate-900">No published gigs are available right now.</h2><p className="mt-1">Only gigs with a verified posting payment and published status appear here. Customer drafts remain private.</p>{subscriptionRequired && <p className="mt-2">Free gigs will continue to appear here; an active subscription is needed only for new Paid-gig discovery.</p>}</section>}
       <section className="mt-6 grid gap-5 md:grid-cols-2">{gigs.map((gig) => <GigCard key={gig._id} gig={gig} />)}</section>
     </main>
   );

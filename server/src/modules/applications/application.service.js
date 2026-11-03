@@ -48,7 +48,7 @@ function assertTalent(talent) {
   return id;
 }
 
-function applicationView(application, gig) {
+function applicationView(application, gig, { canReapply = false } = {}) {
   const source = typeof application.toObject === "function" ? application.toObject() : application;
   const gigSource = typeof gig.toObject === "function" ? gig.toObject() : gig;
   const result = {
@@ -59,6 +59,7 @@ function applicationView(application, gig) {
     note: source.note,
     status: source.status,
     createdAt: source.createdAt,
+    canReapply,
     gig: gigSource ? {
       _id: gigSource._id,
       title: gigSource.title,
@@ -150,7 +151,22 @@ export function createApplicationService({
     const applications = await store.findByTalentId(talentId);
     return Promise.all(applications.map(async (application) => {
       const gig = await gigRepository.findGigById(application.gigId);
-      return applicationView(application, gig);
+      const source = typeof application.toObject === "function" ? application.toObject() : application;
+      const gigSource = typeof gig?.toObject === "function" ? gig.toObject() : gig;
+      const hasActiveApplication = applications.some((candidate) => (
+        idMatches(candidate.gigId, source.gigId)
+        && idMatches(candidate.positionId, source.positionId)
+        && ["pending", "accepted"].includes(candidate.status)
+      ));
+      const positionExists = gigSource?.positions?.some((position) => idMatches(position._id, source.positionId));
+      const deadline = new Date(gigSource?.applicationDeadline).getTime();
+      const canReapply = source.status === "withdrawn"
+        && !hasActiveApplication
+        && gigSource?.publicationStatus === "published"
+        && positionExists
+        && Number.isFinite(deadline)
+        && deadline >= Date.now();
+      return applicationView(application, gig, { canReapply });
     }));
   }
 

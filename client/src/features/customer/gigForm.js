@@ -65,14 +65,16 @@ export function validateAndSerialize(form) {
     const label = `Position ${index + 1}`;
     if (position.roleType === "instrumentalist" && !position.instrument.trim()) errors[`instrument-${index}`] = `${label}: instrument is required.`;
     if (!Number.isInteger(Number(position.slots)) || Number(position.slots) < 1) errors[`slots-${index}`] = `${label}: use at least one slot.`;
-    position.auditionSongs.forEach((song, songIndex) => {
+    const auditionSongs = Array.isArray(position.auditionSongs) ? position.auditionSongs : [];
+    if (auditionSongs.length !== 3) errors[`songs-${index}`] = `${label}: exactly three audition songs are required.`;
+    auditionSongs.forEach((song, songIndex) => {
       if (!song.trim()) errors[`song-${index}-${songIndex}`] = `${label}: song ${songIndex + 1} is required.`;
     });
     return {
       roleType: position.roleType,
       instrument: position.roleType === "instrumentalist" ? position.instrument.trim() : null,
       slots: Number(position.slots),
-      auditionSongs: position.auditionSongs.map((song) => song.trim()),
+      auditionSongs: auditionSongs.map((song) => song.trim()),
     };
   });
   if (!positions.length) errors.positions = "Add at least one required position.";
