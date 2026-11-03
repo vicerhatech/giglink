@@ -48,6 +48,13 @@ export function AuthProvider({ children }) {
     [authenticate],
   );
 
+  const updateAccount = useCallback(async ({ name, phone }) => {
+    const response = await api.patch("/users/me", { name, phone });
+    const updatedUser = response.data.data.user;
+    setUser(updatedUser);
+    return updatedUser;
+  }, []);
+
   useEffect(() => {
     let active = true;
 
@@ -81,10 +88,11 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user),
       register,
       login,
+      updateAccount,
       logout,
       getErrorMessage,
     }),
-    [isLoading, login, logout, register, user],
+    [isLoading, login, logout, register, updateAccount, user],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

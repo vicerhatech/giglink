@@ -5,11 +5,19 @@ import { validateLogin } from "./auth-form-utils";
 
 const initialValues = { email: "", password: "" };
 
+function dashboardPathForRole(role) {
+  if (role === "customer") return "/customer/dashboard";
+  if (role === "talent") return "/talent/dashboard";
+  if (role === "admin") return "/admin/dashboard";
+  return "/";
+}
+
 export function LoginPage() {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login, getErrorMessage } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,8 +36,8 @@ export function LoginPage() {
 
     setIsSubmitting(true);
     try {
-      await login(values);
-      navigate(location.state?.from?.pathname || "/", { replace: true });
+      const user = await login(values);
+      navigate(location.state?.from?.pathname || dashboardPathForRole(user.role), { replace: true });
     } catch (error) {
       setApiError(getErrorMessage(error, "Unable to sign in. Please try again."));
     } finally {
@@ -39,10 +47,10 @@ export function LoginPage() {
 
   return (
     <AuthCard title="Welcome back" subtitle="Sign in to manage your GigLink account.">
-      <form className="space-y-4" onSubmit={handleSubmit} noValidate>
-        <Field label="Email" name="email" type="email" value={values.email} onChange={updateField} error={errors.email} autoComplete="email" />
-        <Field label="Password" name="password" type="password" value={values.password} onChange={updateField} error={errors.password} autoComplete="current-password" />
-        {apiError && <p role="alert" className="text-sm text-red-700">{apiError}</p>}
+      <form className="space-y-4" onSubmit={handleSubmit} noValidate aria-busy={isSubmitting}>
+        <Field label="Email" name="email" type="email" placeholder="you@example.com" value={values.email} onChange={updateField} error={errors.email} autoComplete="email" />
+        <PasswordField label="Password" name="password" value={values.password} onChange={updateField} error={errors.password} autoComplete="current-password" visible={showPassword} onToggle={() => setShowPassword((visible) => !visible)} />
+        {apiError && <p role="alert" aria-live="assertive" className="text-sm text-red-700">{apiError}</p>}
         <button type="submit" disabled={isSubmitting} className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
           {isSubmitting ? "Signing in…" : "Sign in"}
         </button>
@@ -58,4 +66,8 @@ function AuthCard({ title, subtitle, children }) {
 
 function Field({ label, error, ...inputProps }) {
   return <label className="block text-sm font-medium text-slate-700">{label}<input {...inputProps} className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" aria-invalid={Boolean(error)} />{error && <span className="mt-1 block text-sm text-red-700">{error}</span>}</label>;
+}
+
+function PasswordField({ label, error, visible, onToggle, ...inputProps }) {
+  return <label className="block text-sm font-medium text-slate-700">{label}<span className="relative mt-1.5 block"><input {...inputProps} type={visible ? "text" : "password"} className="w-full rounded-lg border border-slate-300 px-3 py-2 pr-16 text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" aria-invalid={Boolean(error)} /><button className="absolute inset-y-0 right-1 px-3 text-sm font-semibold text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500" type="button" onClick={onToggle} aria-label={visible ? "Hide password" : "Show password"} aria-pressed={visible}>{visible ? "Hide" : "Show"}</button></span>{error && <span className="mt-1 block text-sm text-red-700">{error}</span>}</label>;
 }
