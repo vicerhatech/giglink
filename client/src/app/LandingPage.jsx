@@ -1,4 +1,5 @@
 import { PublicFooter, PublicHeader } from "./PublicShell";
+import { Link } from "react-router-dom";
 
 const customerSteps = [
   ["01", "Describe your event", "Create a gig with the date, talent needed, and the songs applicants should prepare."],
@@ -68,14 +69,14 @@ export function LandingPage() {
               <ol>
                 {customerSteps.map(([number, title, text]) => <li key={number}><span>{number}</span><div><h4>{title}</h4><p>{text}</p></div></li>)}
               </ol>
-              <a href="#get-started" className="text-link">Plan your next gig <Arrow /></a>
+              <Link to="/register?role=customer" className="text-link">Plan your next gig <Arrow /></Link>
             </article>
             <article className="journey journey-dark" id="for-talents">
               <div className="journey-heading"><span className="journey-label">For talent</span><h3>Put your performance in front of the right host.</h3></div>
               <ol>
                 {talentSteps.map(([number, title, text]) => <li key={number}><span>{number}</span><div><h4>{title}</h4><p>{text}</p></div></li>)}
               </ol>
-              <a href="#get-started" className="text-link">Explore your path <Arrow /></a>
+              <Link to="/register?role=talent" className="text-link">Explore your path <Arrow /></Link>
             </article>
           </div>
         </section>
