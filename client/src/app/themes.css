@@ -76,14 +76,14 @@ html, body { background: var(--theme-bg); color: var(--theme-text); }
 .public-header-bar .public-header { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; min-height: 80px; gap: 32px; background: transparent; }
 .public-header-bar .public-nav { justify-self: center; gap: 24px; }
 .public-header-actions { display: flex; align-items: center; gap: 20px; justify-self: end; }
-.public-account-link { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: var(--theme-text); text-decoration: none; }
+.public-account-link { display: inline-flex; align-items: center; gap: 10px; min-width: 0; padding: 0; border: 0; background: transparent; color: var(--theme-text); font: inherit; text-align: left; cursor: pointer; text-decoration: none; }
 .public-account-avatar { display: grid; place-items: center; width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; background: var(--theme-accent); color: var(--theme-accent-text); font-size: 13px; font-weight: 700; }
 .public-account-link strong,.public-account-link small { display: block; }
 .public-account-link strong { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .public-account-link small { margin-top: 3px; color: var(--theme-muted); font-size: 10px; text-transform: capitalize; }
 .public-session-loading { font-size: 12px; color: var(--theme-muted); }
 .public-header-actions .theme-toggle { width: 40px; height: 40px; }
-.public-header-bar .public-mobile-nav { background: var(--theme-surface); border-color: var(--theme-border); border-radius: 10px; }
+.public-header-bar .public-mobile-nav { display: grid; position: absolute; z-index: 30; top: calc(100% - 1px); right: 0; width: min(300px, calc(100vw - 32px)); padding: 10px; box-shadow: 0 14px 28px #0002; background: var(--theme-surface); border-color: var(--theme-border); border-radius: 10px; max-height: calc(100dvh - 100px); overflow-y: auto; }
 .public-header-bar .public-mobile-nav a { color: var(--theme-text); }
 .public-header-bar .public-mobile-nav a:hover { background: var(--theme-soft); }
 .public-header-bar .public-mobile-nav button { padding: 12px; text-align: left; border: 0; background: transparent; color: var(--theme-text); font: inherit; font-size: .92rem; font-weight: 700; cursor: pointer; }

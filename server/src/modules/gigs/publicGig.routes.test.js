@@ -3,6 +3,23 @@ import assert from "node:assert/strict";
 import express from "express";
 import { createPublicGigRouter } from "./publicGig.router.js";
 
+test("single public preview is published-only and never exposes private fields", async () => {
+  const queries = [];
+  const model = { findOne(filter) { queries.push(filter); return { select() { return this; }, async lean() { return filter._id.endsWith("11") ? { _id: filter._id, title: "Public", eventType: "Reception", eventDate: "2027-12-15", gigType: "paid", location: "SECRET-VENUE", customerId: "SECRET-OWNER", description: "SECRET-BRIEF", positions: [{ roleType: "instrumentalist", instrument: "Guitar", auditionSongs: ["SECRET-SONG"] }] } : null; } }; } };
+  const app = express(); app.use("/api/public/gigs", createPublicGigRouter({ model }));
+  const server = app.listen(0, "127.0.0.1"); await new Promise(resolve => server.once("listening", resolve));
+  const base = `http://127.0.0.1:${server.address().port}/api/public/gigs`;
+  try {
+    const result = await fetch(`${base}/507f1f77bcf86cd799439011`, { signal: AbortSignal.timeout(5000) });
+    assert.equal(result.status, 200); const data = await result.json();
+    assert.equal(JSON.stringify(data).includes("SECRET"), false);
+    assert.deepEqual(Object.keys(data.data.gig).sort(), ["_id", "eventDate", "eventType", "gigType", "roles", "title"]);
+    assert.equal((await fetch(`${base}/507f1f77bcf86cd799439012`, { signal: AbortSignal.timeout(5000) })).status, 404);
+    assert.equal((await fetch(`${base}/invalid`, { signal: AbortSignal.timeout(5000) })).status, 400);
+    assert.equal(queries.length, 2); assert.ok(queries.every(query => query.publicationStatus === "published"));
+  } finally { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); }
+});
+
 test("public event previews constrain published queries and never serialize private fields", async () => {
   const queries = [];
   let selected, offset, limit;

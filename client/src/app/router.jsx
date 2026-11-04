@@ -3,6 +3,7 @@ import { AppShell } from "./AppShell";
 import { NotFoundPage } from "./NotFoundPage";
 import { LandingPage } from "./LandingPage";
 import { ExplorePage } from "./ExplorePage";
+import { EventPreviewPage } from "./EventPreviewPage";
 import { AuthModalHost } from "./AuthModalHost";
 import { AboutPage, ContactPage, HelpPage, HowItWorksPage, PrivacyPage, TermsPage } from "./PublicPages";
 import { AdminDashboard, CustomerDashboard, TalentDashboard } from "./DashboardPages";
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([{ element: <AuthModalHost />, childre
   },
   { path: "/about", element: <AboutPage /> },
   { path: "/explore", element: <ExplorePage /> },
+  { path: "/explore/:id", element: <EventPreviewPage /> },
   { path: "/how-it-works", element: <HowItWorksPage /> },
   { path: "/help", element: <HelpPage /> },
   { path: "/privacy", element: <PrivacyPage /> },

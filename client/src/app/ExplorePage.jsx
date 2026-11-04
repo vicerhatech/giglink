@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { PublicPage } from "./PublicShell";
-
-const dateLabel = (date) => {
-  const value = new Date(date);
-  return Number.isNaN(value.getTime()) ? "Date to be confirmed" : value.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
-};
+import { GigCard } from "../components/GigCard";
 
 export function EventPreviews({ compact = false }) {
   const [type, setType] = useState("");
@@ -24,7 +20,7 @@ export function EventPreviews({ compact = false }) {
   const gigs = compact ? state.data?.gigs.slice(0, 3) : state.data?.gigs;
   return <div className="event-preview-list" aria-busy={state.loading}>
     {!compact && <div className="explore-toolbar"><label htmlFor="event-type">Opportunity type<select id="event-type" value={type} onChange={(event) => { setType(event.target.value); setPage(1); }}><option value="">All events</option><option value="free">Free gigs</option><option value="paid">Paid gigs</option></select></label><p>Published events only. Exact venues stay private.</p></div>}
-    {state.loading ? <p className="public-state" role="status">Finding published events…</p> : state.error ? <div className="public-state" role="alert"><p>{state.error}</p><button className="button button-secondary" onClick={() => setRetry((value) => value + 1)}>Try again</button></div> : !gigs?.length ? <div className="public-state"><h3>The next lineup is still taking shape.</h3><p>{type ? "There are no published events of this type yet. Try all events or check back soon." : "No events have been published yet. Check back soon, or create a brief for your own event."}</p><Link className="text-link" to="/register?role=customer">Post an event →</Link></div> : <><div className="event-cards">{gigs.map((gig) => <article className="event-card" key={gig._id}><div className="event-card-top"><span className={`event-type ${gig.gigType}`}>{gig.gigType} gig</span><span>{dateLabel(gig.eventDate)}</span></div><p className="event-category">{gig.eventType}</p><h3>{gig.title}</h3><div className="event-roles">{gig.roles.map((role) => <span key={role}>{role}</span>)}</div><p className="venue-note">Exact venue shared after acceptance.</p><Link className="text-link" to="/register?role=talent">Join as talent to explore eligible gigs →</Link></article>)}</div>{!compact && state.data.pages > 1 && <nav className="explore-pagination" aria-label="Event pages"><button className="button button-secondary" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button><span aria-live="polite">Page {page} of {state.data.pages}</span><button className="button button-secondary" disabled={page >= state.data.pages} onClick={() => setPage((value) => value + 1)}>Next</button></nav>}</>}
+    {state.loading ? <p className="public-state" role="status">Finding published events…</p> : state.error ? <div className="public-state" role="alert"><p>{state.error}</p><button className="button button-secondary" onClick={() => setRetry((value) => value + 1)}>Try again</button></div> : !gigs?.length ? <div className="public-state"><h3>The next lineup is still taking shape.</h3><p>{type ? "There are no published events of this type yet. Try all events or check back soon." : "No events have been published yet. Check back soon, or create a brief for your own event."}</p><Link className="text-link" to="/register?role=customer">Post an event →</Link></div> : <><div className="gig-grid">{gigs.map(gig => <GigCard key={gig._id} gig={gig} to={`/explore/${gig._id}`} linkLabel="View event" />)}</div>{!compact && state.data.pages > 1 && <nav className="explore-pagination" aria-label="Event pages"><button className="button button-secondary" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>Previous</button><span aria-live="polite">Page {page} of {state.data.pages}</span><button className="button button-secondary" disabled={page >= state.data.pages} onClick={() => setPage((value) => value + 1)}>Next</button></nav>}</>}
   </div>;
 }
 

@@ -5,6 +5,7 @@ import { apiMessage, cancelGig, createGigDraft, getMyGig, listMyGigs, updateGig 
 import { gigToForm } from "./gigForm";
 import { GigPostingPaymentButton } from "../payments/GigPostingPaymentButton";
 import "./customer.css";
+import { GigCard } from "../../components/GigCard";
 
 const money = new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 });
 
@@ -20,7 +21,7 @@ export function MyGigsPage() {
   const [gigs, setGigs] = useState(null);
   const [error, setError] = useState("");
   useEffect(() => { listMyGigs().then((data) => setGigs(data.gigs || [])).catch((reason) => setError(apiMessage(reason))); }, []);
-  return <section><div className="customer-page-heading"><div><h1>My gigs</h1><p>Manage your drafts, published gigs, and cancellations.</p></div><Link className="customer-primary customer-link" to="/customer/gigs/new">Create a gig</Link></div><LayoutMessage error={error} />{gigs === null && !error ? <p>Loading your gigs...</p> : gigs?.length === 0 ? <div className="customer-empty"><h2>No gigs yet</h2><p>Create your first gig draft when you are ready. Posting fees are paid separately before publication.</p><Link className="customer-primary customer-link" to="/customer/gigs/new">Create a gig</Link></div> : <div className="customer-cards">{gigs?.map((gig) => <article className="customer-card" key={gig._id}><div><Status>Type: {gig.gigType}</Status> <Status>Posting fee: {gig.postingPaymentStatus}</Status> <Status>Publication: {gig.publicationStatus}</Status></div><h2>{gig.title}</h2><p>{gig.eventType} · {new Date(gig.eventDate).toLocaleDateString("en-NG")}</p>{gig.gigType === "paid" && <p>Talent compensation: {money.format(gig.paymentRange.min)} – {money.format(gig.paymentRange.max)}</p>}{needsPostingPayment(gig) && <div className="customer-payment-action"><p>This private draft needs its posting fee before Talents can discover it.</p><GigPostingPaymentButton gigId={gig._id}>Pay {money.format(gig.postingFee)} and publish</GigPostingPaymentButton></div>}<Link to={`/customer/gigs/${gig._id}`}>Open and manage</Link></article>)}</div>}</section>;
+  return <section><div className="customer-page-heading"><div><h1>My gigs</h1><p>Manage your drafts, published gigs, and cancellations.</p></div><Link className="customer-primary customer-link" to="/customer/gigs/new">Create a gig</Link></div><LayoutMessage error={error} />{gigs === null && !error ? <p>Loading your gigs...</p> : gigs?.length === 0 ? <div className="customer-empty"><h2>No gigs yet</h2><p>Create your first gig draft when you are ready. Posting fees are paid separately before publication.</p><Link className="customer-primary customer-link" to="/customer/gigs/new">Create a gig</Link></div> : <div className="gig-grid">{gigs?.map(gig => <GigCard key={gig._id} gig={gig} to={`/customer/gigs/${gig._id}`} linkLabel="Open and manage"><div><Status>Posting fee: {gig.postingPaymentStatus}</Status> <Status>{gig.publicationStatus}</Status></div>{needsPostingPayment(gig) && <div className="customer-payment-action"><p>This draft stays private until its posting fee is verified.</p><GigPostingPaymentButton gigId={gig._id}>Pay {money.format(gig.postingFee)} and publish</GigPostingPaymentButton></div>}</GigCard>)}</div>}</section>;
 }
 
 export function CreateGigPage() {

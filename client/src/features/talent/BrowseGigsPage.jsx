@@ -1,69 +1,28 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { TalentSubscriptionPrompt } from "../payments/TalentSubscriptionPrompt";
-
-function formatNaira(value) {
-  return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(value);
-}
-
-function GigCard({ gig }) {
-  const paid = gig.gigType === "paid";
-  return (
-    <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">{gig.eventType}</p>
-          <h2 className="mt-1 text-xl font-bold text-slate-900">{gig.title}</h2>
-        </div>
-        <span className={`rounded-full px-3 py-1 text-xs font-bold ${paid ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-800"}`}>{paid ? "PAID" : "FREE"}</span>
-      </div>
-      <p className="mt-3 line-clamp-3 text-slate-600">{gig.description}</p>
-      <dl className="mt-4 space-y-1 text-sm text-slate-600">
-        <div><dt className="inline font-semibold text-slate-700">Date: </dt><dd className="inline">{new Date(gig.eventDate).toLocaleDateString()}</dd></div>
-        <div><dt className="inline font-semibold text-slate-700">Time: </dt><dd className="inline">{gig.eventTime}</dd></div>
-        {paid && <div><dt className="inline font-semibold text-slate-700">Talent fee: </dt><dd className="inline">{formatNaira(gig.paymentRange.min)} – {formatNaira(gig.paymentRange.max)}</dd></div>}
-      </dl>
-      <Link className="mt-5 inline-block font-semibold text-indigo-700 hover:text-indigo-900" to={`/talent/gigs/${gig._id}`}>View gig</Link>
-    </article>
-  );
-}
+import { GigCard } from "../../components/GigCard";
 
 export function BrowseGigsPage() {
   const [gigs, setGigs] = useState([]);
   const [subscriptionRequired, setSubscriptionRequired] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const [attempt, setAttempt] = useState(0);
   useEffect(() => {
-    async function loadGigs() {
-      try {
-        const response = await api.get("/talent/gigs");
-        setGigs(response.data.data.gigs || []);
-        setSubscriptionRequired(Boolean(response.data.data.subscriptionRequired && !response.data.data.hasActiveSubscription));
-      } catch (requestError) {
-        setError(requestError.response?.data?.message || "Could not load available gigs.");
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadGigs();
-  }, []);
+    const controller = new AbortController();
+    setLoading(true); setError("");
+    api.get("/talent/gigs", { signal: controller.signal, timeout: 15000 }).then(response => {
+      if (controller.signal.aborted) return;
+      setGigs(response.data.data.gigs || []);
+      setSubscriptionRequired(Boolean(response.data.data.subscriptionRequired && !response.data.data.hasActiveSubscription));
+    }).catch(error => { if (!controller.signal.aborted) setError(error.response?.data?.message || "Could not load available gigs."); })
+      .finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
+  }, [attempt]);
 
-  if (loading) return <main className="mx-auto max-w-5xl px-6 py-10"><section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-600 shadow-sm" role="status">Loading available gigs...</section></main>;
-
-  return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="text-3xl font-bold text-slate-900">Browse gigs</h1>
-      <p className="mt-2 text-slate-600">Event locations are shared after your application is accepted.</p>
-      {subscriptionRequired && <section className="mt-6 rounded-xl border border-amber-300 bg-amber-50 p-5 text-amber-950">
-        <h2 className="font-bold">Paid-gig access requires a subscription</h2>
-        <p className="mt-1">Subscribe for ₦5,000 per month to browse paid gigs. Free gigs remain available.</p>
-        <TalentSubscriptionPrompt />
-      </section>}
-      {error && <p className="mt-6 rounded bg-red-50 p-3 text-red-700" role="alert">{error}</p>}
-      {!error && gigs.length === 0 && <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5 text-slate-600"><h2 className="font-bold text-slate-900">No published gigs are available right now.</h2><p className="mt-1">Only gigs with a verified posting payment and published status appear here. Customer drafts remain private.</p>{subscriptionRequired && <p className="mt-2">Free gigs will continue to appear here; an active subscription is needed only for new Paid-gig discovery.</p>}</section>}
-      <section className="mt-6 grid gap-5 md:grid-cols-2">{gigs.map((gig) => <GigCard key={gig._id} gig={gig} />)}</section>
-    </main>
-  );
+  return <section className="gig-browser-page"><header className="gig-page-heading"><div><p className="section-label">Your next performance</p><h1>Browse gigs</h1><p>Find your next role. Exact venues are shared only after acceptance.</p></div>{!loading && !error && <span className="gig-kind">{gigs.length} available</span>}</header>
+    {subscriptionRequired && <section className="gig-access-notice"><TalentSubscriptionPrompt /></section>}
+    {loading ? <p className="gig-state" role="status">Loading available gigs…</p> : error ? <div className="gig-state" role="alert"><p>{error}</p><button className="button button-secondary" type="button" onClick={() => setAttempt(value => value + 1)}>Try again</button></div> : gigs.length === 0 ? <section className="gig-state"><h2>No published gigs are available right now.</h2><p>Only gigs with verified posting payments and published status appear here. Customer drafts remain private.</p>{subscriptionRequired && <p>Free gigs remain available; a subscription is needed only for new Paid gigs.</p>}</section> : <div className="gig-grid">{gigs.map(gig => <GigCard key={gig._id} gig={gig} to={`/talent/gigs/${gig._id}`} />)}</div>}
+  </section>;
 }
