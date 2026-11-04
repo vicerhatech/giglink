@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
 import "./workspace.css";
 import { ThemeToggle } from "./ThemeProvider";
+import { dashboardPathForRole } from "../features/auth/dashboard-path";
 
 const navigation = {
   customer: [
@@ -39,14 +40,14 @@ function Icon({ name }) {
   return <svg aria-hidden="true" className="app-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{paths[name]}</svg>;
 }
 
-function Brand() {
-  return <Link className="brand app-brand" to="/"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>GigLink</span></Link>;
+function Brand({ role, onClick }) {
+  return <Link className="brand app-brand" to={dashboardPathForRole(role)} onClick={onClick} aria-label="GigLink workspace home"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>GigLink</span></Link>;
 }
 
 function Sidebar({ role, close, onLogout }) {
   const links = navigation[role] || [];
   return <aside className="app-sidebar" aria-label="Application navigation">
-    <div className="app-sidebar-brand"><Brand /><button className="drawer-close" onClick={close} type="button" aria-label="Close navigation">×</button></div>
+    <div className="app-sidebar-brand"><Brand role={role} onClick={close} /><button className="drawer-close" onClick={close} type="button" aria-label="Close navigation">×</button></div>
     <nav className="app-nav">
       <p className="app-nav-label">{role} workspace</p>
       {links.map(([label, to, icon]) => <NavLink className={({ isActive }) => `app-nav-link${isActive ? " active" : ""}`} key={to} onClick={close} to={to}><Icon name={icon} /><span>{label}</span></NavLink>)}
@@ -80,7 +81,7 @@ export function AuthenticatedShell({ user, onLogout, children }) {
   return <div className="authenticated-app">
     <header className="app-header">
       <button className="menu-button" aria-controls="app-sidebar" aria-expanded={drawerOpen} aria-label={drawerOpen ? "Close navigation" : "Open navigation"} onClick={() => setDrawerOpen((open) => !open)} type="button"><span /><span /><span /></button>
-      <div className="app-header-brand"><Brand /></div>
+      <div className="app-header-brand"><Brand role={role} /></div>
       <div className="app-header-context"><span>Your workspace</span><strong>{[...(navigation[role] || [])].sort((a, b) => b[1].length - a[1].length).find(([, to]) => pathname === to || pathname.startsWith(`${to}/`))?.[0] || "Gig details"}</strong></div>
       <div className="app-header-spacer" />
       <ThemeToggle />

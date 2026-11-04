@@ -17,19 +17,19 @@ apply(readPreference());
 
 export function ThemeProvider({ children }) {
   const [preference, setPreference] = useState(readPreference);
+  const [systemDark, setSystemDark] = useState(() => matchMedia("(prefers-color-scheme: dark)").matches);
   useEffect(() => {
     apply(preference);
     try { localStorage.setItem("giglink_appearance", JSON.stringify(preference)); } catch { /* Private browsing may disable persistence. */ }
     const query = matchMedia("(prefers-color-scheme: dark)");
-    const update = () => apply(preference);
+    const update = () => { apply(preference); setSystemDark(query.matches); };
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, [preference]);
-  return <ThemeContext.Provider value={{ ...preference, setMode: mode => setPreference(value => ({ ...value, mode })), setTheme: theme => setPreference(value => ({ ...value, theme })) }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={{ ...preference, isDark: preference.mode === "dark" || preference.mode === "system" && systemDark, setMode: mode => setPreference(value => ({ ...value, mode })), setTheme: theme => setPreference(value => ({ ...value, theme })) }}>{children}</ThemeContext.Provider>;
 }
 export function useTheme() { return useContext(ThemeContext); }
 export function ThemeToggle() {
-  const { mode, setMode } = useTheme();
-  const dark = mode === "dark" || (mode === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
-  return <button className="theme-toggle" type="button" aria-label={`Switch to ${dark ? "light" : "dark"} mode`} onClick={() => setMode(dark ? "light" : "dark")}>{dark ? "☀" : "☾"}</button>;
+  const { isDark, setMode } = useTheme();
+  return <button className="theme-toggle" type="button" title={`Switch to ${isDark ? "light" : "dark"} mode`} aria-label={`Switch to ${isDark ? "light" : "dark"} mode`} onClick={() => setMode(isDark ? "light" : "dark")}>{isDark ? "☀" : "☾"}</button>;
 }
