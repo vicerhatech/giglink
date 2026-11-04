@@ -53,4 +53,5 @@ html[data-mode="dark"] :is(.help-category-toggle,.help-search label,.help-topics
 html[data-mode="dark"] :is(.sound-stage,.home-final,.audience-grid article:last-child,.journey-dark,.role-card-dark) { background: var(--theme-accent); }
 html[data-mode="dark"] :is(.quick-action.emphasis,.event-brief,.sound-stage,.home-final,.journey-dark,.role-card-dark,.closing-section) :is(h1,h2,h3,h4,p,span,strong,b) { color: #f2f6ee; }
 html[data-mode="dark"] .menu-button span { background: var(--theme-text); }
+html[data-mode="dark"] .public-mobile-nav a { color: var(--theme-text); }
 @media (max-width: 600px) { .admin-stat-grid { grid-template-columns: 1fr; }.settings-extra { padding: 20px; }.public-header { gap: 12px; }.theme-choice { flex: 1; }.admin-gig-list article { flex-direction: column; } }
