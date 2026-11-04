@@ -29,8 +29,8 @@ export function LandingPage() {
             <h1>Find the right instrumentalist or backup vocalist for your next event.</h1>
             <p className="hero-lede">GigLink brings event hosts and talented performers together through clear briefs, song-specific auditions, and straightforward decisions.</p>
             <div className="hero-actions" aria-label="Choose your path">
-              <a className="button button-primary" href="#for-customers">I’m hiring talent <Arrow /></a>
-              <a className="button button-secondary" href="#for-talents">I’m looking for gigs <Arrow /></a>
+              <Link className="button button-primary" to="/register?role=customer">I’m hiring talent <Arrow /></Link>
+              <Link className="button button-secondary" to="/register?role=talent">I’m looking for gigs <Arrow /></Link>
             </div>
             <p className="hero-note">For instrumentalists and backup vocalists.</p>
           </div>
@@ -101,8 +101,8 @@ export function LandingPage() {
             <h2>Make the next live set a better fit.</h2>
           </div>
           <div className="closing-actions">
-            <a className="button button-light" href="#for-customers">Post as a customer <Arrow /></a>
-            <a className="button button-outline-light" href="#for-talents">Join as talent <Arrow /></a>
+            <Link className="button button-light" to="/register?role=customer">Post as a customer <Arrow /></Link>
+            <Link className="button button-outline-light" to="/register?role=talent">Join as talent <Arrow /></Link>
           </div>
         </section>
       </main>
