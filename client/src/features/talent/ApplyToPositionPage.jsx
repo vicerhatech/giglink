@@ -22,12 +22,12 @@ export function ApplyToPositionPage() {
         const response = await api.get(`/talent/gigs/${gigId}`);
         const loadedGig = response.data.data.gig;
         const loadedPosition = loadedGig.positions.find((candidate) => String(candidate._id) === positionId);
-        if (!loadedPosition) throw new Error("This gig position is no longer available.");
+        if (!loadedPosition) throw new Error("This musician or vocalist role is no longer available.");
         setGig(loadedGig);
         setPosition(loadedPosition);
         setUploads(emptyUploads(loadedPosition.auditionSongs));
       } catch (requestError) {
-        setError(requestError.response?.data?.message || requestError.message || "Could not load this position.");
+        setError(requestError.response?.data?.message || requestError.message || "Could not load this role.");
       }
     }
     loadGig();
@@ -61,7 +61,7 @@ export function ApplyToPositionPage() {
     setStatus("");
     if (!position) return;
     if (position.auditionSongs.some((song) => !uploads[song]?.file && !uploads[song]?.video)) {
-      setError("Choose one video for each requested audition song.");
+      setError("Choose one video for each song or performance sample requested by the host.");
       return;
     }
 
@@ -91,13 +91,13 @@ export function ApplyToPositionPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       <Link className="font-semibold text-indigo-700" to={`/talent/gigs/${gigId}`}>Back to gig</Link>
       <h1 className="mt-5 text-3xl font-bold text-slate-900">Apply to {gig.title}</h1>
-      <p className="mt-2 text-slate-600">Submit one audition video for each requested song.</p>
+      <p className="mt-2 text-slate-600">Applying as: <strong>{position.instrument || "Backup vocalist"}</strong>. The host requests {position.auditionSongs.length} demo video{position.auditionSongs.length === 1 ? "" : "s"} — one for each song or sample below.</p>
       <form className="mt-7 space-y-5 rounded-xl border border-slate-200 bg-white p-6 shadow-sm" onSubmit={submitApplication}>
-        {position.auditionSongs.map((song) => {
+        {position.auditionSongs.map((song, index) => {
           const upload = uploads[song] || {};
           return <fieldset className="rounded border border-slate-200 p-4" key={song}>
-            <label className="block font-semibold text-slate-900" htmlFor={`video-${song}`}>{song}</label>
-            <input accept="video/*" className="mt-3 block w-full text-sm" disabled={submitting} id={`video-${song}`} type="file" onChange={(event) => chooseFile(song, event.target.files?.[0])} />
+            <label className="block font-semibold text-slate-900" htmlFor={`video-${index}`}>Demo {index + 1}: {song}</label>
+            <input accept="video/*" className="mt-3 block w-full text-sm" disabled={submitting} id={`video-${index}`} type="file" onChange={(event) => chooseFile(song, event.target.files?.[0])} />
             {upload.file && <p className="mt-2 text-sm text-slate-600">Selected: {upload.file.name}</p>}
             {upload.progress > 0 && !upload.video && <p className="mt-2 text-sm text-indigo-700">Uploading: {upload.progress}%</p>}
             {upload.video && <p className="mt-2 text-sm font-medium text-emerald-700">Video uploaded.</p>}

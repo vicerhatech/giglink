@@ -18,8 +18,8 @@ const applicationSchema = new mongoose.Schema(
       type: [demoVideoSchema],
       required: true,
       validate: {
-        validator: (videos) => videos.length === 3,
-        message: "An application must contain exactly three demo videos.",
+        validator: (videos) => Array.isArray(videos) && videos.length >= 1 && videos.length <= 3,
+        message: "An application needs 1 to 3 demo videos, matching the host’s requests.",
       },
     },
     note: { type: String, default: "", trim: true, maxlength: 2000 },

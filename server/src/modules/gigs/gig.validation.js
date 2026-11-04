@@ -35,11 +35,11 @@ export function validateGigDraft(input = {}) {
 
   const positions = Array.isArray(input.positions) ? input.positions : [];
   if (positions.length === 0) {
-    errors.push("At least one required position is needed.");
+    errors.push("Add at least one musician or vocalist role.");
   }
 
   const normalizedPositions = positions.map((position, index) => {
-    const prefix = `positions[${index}]`;
+    const prefix = `Role ${index + 1}`;
     const roleType = position?.roleType;
     const instrument = isNonEmptyString(position?.instrument)
       ? position.instrument.trim()
@@ -49,16 +49,18 @@ export function validateGigDraft(input = {}) {
       : [];
 
     if (!ROLE_TYPES.has(roleType)) {
-      errors.push(`${prefix}.roleType must be instrumentalist or backup_vocalist.`);
+      errors.push(`${prefix}: choose instrumentalist or backup vocalist.`);
     }
     if (!Number.isInteger(position?.slots) || position.slots < 1) {
-      errors.push(`${prefix}.slots must be a positive whole number.`);
+      errors.push(`${prefix}: enter at least one person needed.`);
     }
-    if (songs.length !== 3 || songs.some((song) => !isNonEmptyString(song))) {
-      errors.push(`${prefix}.auditionSongs must contain exactly three non-empty songs.`);
+    if (songs.length < 1 || songs.length > 3 || songs.some((song) => !isNonEmptyString(song))) {
+      errors.push(`${prefix}: request between 1 and 3 songs or performance samples.`);
+    } else if (new Set(songs).size !== songs.length) {
+      errors.push(`${prefix}: use a different title for each song or performance sample.`);
     }
     if (roleType === "instrumentalist" && !instrument) {
-      errors.push(`${prefix}.instrument is required for instrumentalists.`);
+      errors.push(`${prefix}: enter the instrument you need.`);
     }
 
     return {

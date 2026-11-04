@@ -2,7 +2,7 @@
 
 ## MERN Stack MVP Project Specification
 
-GigLink is a responsive web marketplace that connects event hosts/customers with instrumentalists and backup vocalists. Customers post free or paid gigs, specify the talent they need and three audition songs, and review three demo videos submitted by applicants. Talents browse eligible gigs, apply to a specific position, and customers accept or reject applicants.
+GigLink is a responsive web marketplace that connects event hosts/customers with instrumentalists and backup vocalists. Customers post free or paid gigs, specify the musicians they need and 1–3 songs or performance samples per role, and review one matching demo video per request. Talents browse eligible gigs, apply for a role, and customers accept or reject applicants.
 
 This repository is intentionally scoped as a **demo-ready MVP** for a four-student MERN Stack project. The architecture prioritizes independent feature ownership, predictable Git integration, and low AI-agent usage.
 
@@ -18,10 +18,10 @@ The demo must prove this complete flow:
 4. A Free gig requires a ₦5,000 posting fee before publication.
 5. A Paid gig requires a ₦10,000 posting fee before publication.
 6. A paid gig contains a talent payment range with a minimum value of ₦25,000 and no platform maximum.
-7. The customer defines required positions and exactly three audition songs for each position.
+7. The customer defines musician/vocalist roles and requests 1–3 songs or performance samples per role.
 8. A talent registers and logs in.
 9. An eligible talent browses gigs without seeing the exact gig location.
-10. The talent applies to a position and submits exactly three demo videos, one for each requested song.
+10. The talent applies for a role and submits exactly one video per requested song or sample (1–3 videos total).
 11. The customer reviews the application and demo videos.
 12. The customer accepts or rejects the applicant.
 13. When accepted, that talent can see the exact location for that accepted gig.
@@ -37,7 +37,7 @@ A customer/event host can:
 - Register and log in.
 - Create Free or Paid gig drafts.
 - Add gig title, description, event date/time, exact location, application deadline and required positions.
-- For each position, specify the role/instrument, number of slots and exactly three audition songs.
+- For each role, specify the instrument or vocalist type, people needed, and 1–3 different song or performance sample titles.
 - For Paid gigs, enter a payment range.
 - Pay the required posting fee before a gig becomes public.
 - View their gigs and applicants.
@@ -55,7 +55,7 @@ A talent can:
 - Browse Paid gigs until their first Paid gig is accepted.
 - After their first accepted Paid gig, browse Paid gigs only while their ₦5,000 monthly subscription is active.
 - Apply to a position.
-- Upload exactly three requested audition videos.
+- Upload one demo video for each request (1–3 in total).
 - Track application status.
 - See the exact location only for a gig where their own application has been accepted.
 
@@ -157,9 +157,9 @@ The backend is the source of truth and must redact/omit the exact `location` fro
 Hiding a location only with CSS is not acceptable.
 
 ### 3.7 Audition requirement
-Each gig position contains exactly three requested audition songs.
+Each musician/vocalist role contains 1–3 different, non-empty song or performance sample requests.
 
-An application must contain exactly three demo entries, each corresponding to one requested song.
+An application must contain exactly one demo per requested song or sample. The number of demos must match the role’s requests (1–3); duplicate, missing, extra, and mismatched demos are rejected. Existing three-song gigs/applications remain valid. Public UI says ‘role’ and ‘people needed’; `positions`, `positionId`, `slots`, and existing API paths remain unchanged for compatibility.
 
 ### 3.8 Acceptance
 For MVP simplicity, a customer may accept applicants until a position reaches its configured number of slots. The backend must prevent accepting more applicants than the position's slot count.
@@ -339,7 +339,7 @@ For backup vocalists, `instruments` may be empty.
       roleType: "instrumentalist" | "backup_vocalist",
       instrument: String | null,
       slots: Number,
-      auditionSongs: [String, String, String]
+      auditionSongs: [String] // 1–3 unique, non-empty song/sample titles
     }
   ],
   postingFee: Number,
@@ -691,7 +691,7 @@ The MVP is done when:
 - FREE/PAID labels are visible.
 - Talent can browse according to subscription rules.
 - Exact location is not leaked before acceptance.
-- Talent can submit exactly three requested demos.
+- Talent can submit exactly the requested 1–3 demo videos.
 - Customer can review/accept/reject.
 - Slot over-acceptance is blocked.
 - First accepted Paid gig triggers paid-gig subscription requirement.

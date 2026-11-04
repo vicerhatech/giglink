@@ -4,7 +4,7 @@ export const blankPosition = () => ({
   roleType: "instrumentalist",
   instrument: "",
   slots: 1,
-  auditionSongs: ["", "", ""],
+  auditionSongs: [""],
 });
 
 export const blankGig = () => ({
@@ -62,13 +62,14 @@ export function validateAndSerialize(form) {
   }
 
   const positions = form.positions.map((position, index) => {
-    const label = `Position ${index + 1}`;
+    const label = `Role ${index + 1}`;
     if (position.roleType === "instrumentalist" && !position.instrument.trim()) errors[`instrument-${index}`] = `${label}: instrument is required.`;
-    if (!Number.isInteger(Number(position.slots)) || Number(position.slots) < 1) errors[`slots-${index}`] = `${label}: use at least one slot.`;
+    if (!Number.isInteger(Number(position.slots)) || Number(position.slots) < 1) errors[`slots-${index}`] = `${label}: enter at least one person needed.`;
     const auditionSongs = Array.isArray(position.auditionSongs) ? position.auditionSongs : [];
-    if (auditionSongs.length !== 3) errors[`songs-${index}`] = `${label}: exactly three audition songs are required.`;
+    if (auditionSongs.length < 1 || auditionSongs.length > 3) errors[`songs-${index}`] = `${label}: request 1 to 3 songs or performance samples.`;
+    else if (new Set(auditionSongs.map((song) => song.trim())).size !== auditionSongs.length) errors[`songs-${index}`] = `${label}: give each song or sample a different title.`;
     auditionSongs.forEach((song, songIndex) => {
-      if (!song.trim()) errors[`song-${index}-${songIndex}`] = `${label}: song ${songIndex + 1} is required.`;
+      if (!song.trim()) errors[`song-${index}-${songIndex}`] = `${label}: enter a title for sample ${songIndex + 1}.`;
     });
     return {
       roleType: position.roleType,
@@ -77,7 +78,7 @@ export function validateAndSerialize(form) {
       auditionSongs: auditionSongs.map((song) => song.trim()),
     };
   });
-  if (!positions.length) errors.positions = "Add at least one required position.";
+  if (!positions.length) errors.positions = "Add at least one musician or vocalist role.";
   if (Object.keys(errors).length) return { errors };
 
   return {

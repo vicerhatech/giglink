@@ -5,6 +5,7 @@ import { authRouter } from "../modules/auth/auth.routes.js";
 import { requireAuthenticatedUser } from "../modules/auth/auth.middleware.js";
 import { userRouter } from "../modules/users/user.routes.js";
 import { createCustomerGigRouter, requireCustomer } from "../modules/gigs/gig.router.js";
+import { createPublicGigRouter } from "../modules/gigs/publicGig.router.js";
 import { createCustomerReviewRouter } from "../modules/customer/customer.router.js";
 import { createTalentRouter } from "../modules/talent/routes.js";
 import { createMediaRouter } from "../modules/media/routes.js";
@@ -75,6 +76,7 @@ export function createApp() {
   app.use("/api/auth", authRouter);
   app.use("/api/users", userRouter);
   app.use("/api/gigs", createCustomerGigRouter({ authenticate: requireAuthenticatedUser }));
+  app.use("/api/public/gigs", createPublicGigRouter());
   app.use("/api/customer", createCustomerReviewRouter({ authenticate: requireAuthenticatedUser }));
   app.use("/api/talent", createTalentRouter({
     authenticate: requireAuthenticatedUser,

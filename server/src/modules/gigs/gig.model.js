@@ -26,15 +26,15 @@ const positionSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (songs) =>
-        Array.isArray(songs) && songs.length === 3 && songs.every((song) => typeof song === "string" && song.trim().length > 0),
-      message: "Each position must have exactly three non-empty audition songs.",
+        Array.isArray(songs) && songs.length >= 1 && songs.length <= 3 && songs.every((song) => typeof song === "string" && song.trim().length > 0) && new Set(songs.map((song) => song.trim())).size === songs.length,
+      message: "Each role needs 1 to 3 different song or performance sample titles.",
     },
   },
 });
 
 positionSchema.path("instrument").validate(function validateInstrument(instrument) {
   return this.roleType !== "instrumentalist" || Boolean(instrument?.trim());
-}, "Instrumentalist positions require an instrument.");
+}, "Enter the instrument needed for this role.");
 
 const gigSchema = new mongoose.Schema(
   {
@@ -53,7 +53,7 @@ const gigSchema = new mongoose.Schema(
       required: true,
       validate: {
         validator: (positions) => Array.isArray(positions) && positions.length > 0,
-        message: "A gig must have at least one required position.",
+        message: "A gig must have at least one musician or vocalist role.",
       },
     },
     postingFee: { type: Number, required: true, enum: [FREE_GIG_POSTING_FEE, PAID_GIG_POSTING_FEE] },

@@ -1,9 +1,8 @@
-import { LoginPage } from "./LoginPage";
-import { RegisterPage } from "./RegisterPage";
+import { AuthRoute } from "./AuthRoute";
 
 export const authRoutes = [
-  { path: "/login", element: <LoginPage /> },
-  { path: "/register", element: <RegisterPage /> },
+  { path: "/login", element: <AuthRoute mode="login" /> },
+  { path: "/register", element: <AuthRoute mode="register" /> },
 ];
 
 export { AuthProvider, hasRole, useAuth } from "./auth-context";

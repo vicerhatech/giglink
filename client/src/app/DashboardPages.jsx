@@ -15,7 +15,7 @@ function EmptyStatus({ children }) {
 export function CustomerDashboard({ recentGigs }) {
   const { user } = useOutletContext?.() || {};
   return <div className="dashboard-page"><DashboardHeader eyebrow="Customer workspace" title={`Welcome${user?.name ? `, ${user.name.split(" ")[0]}` : ""}.`} description="Start a new brief or return to the gigs you already manage." />
-    <section className="quick-actions"><QuickAction emphasis to="/customer/gigs/new" title="Create a Gig" text="Set the event details, positions, and audition-song requests." /><QuickAction to="/customer/gigs" title="My Gigs" text="Review drafts, published gigs, and applicants in one place." /></section>
+    <section className="quick-actions"><QuickAction emphasis to="/customer/gigs/new" title="Create a Gig" text="Add your event, the musicians you need, and 1–3 audition requests per role." /><QuickAction to="/customer/gigs" title="My Gigs" text="Review drafts, published gigs, and applicants in one place." /></section>
     {Array.isArray(recentGigs) && recentGigs.length > 0 ? <section className="dashboard-status"><div><p className="section-label">Recent gig status</p><h2>Your latest activity</h2></div><div className="status-list">{recentGigs.slice(0, 4).map((gig) => <Link key={gig._id} to={`/customer/gigs/${gig._id}`}><span>{gig.title}</span><b className={`status-pill ${gig.publicationStatus}`}>{gig.publicationStatus}</b></Link>)}</div></section> : <EmptyStatus>Recent gig status will appear here once your Gig data is available.</EmptyStatus>}
   </div>;
 }

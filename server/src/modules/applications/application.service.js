@@ -16,18 +16,20 @@ function activeApplicationKey(gigId, positionId, talentId) {
 
 function getPosition(gig, positionId) {
   const position = gig.positions?.find((candidate) => idMatches(candidate._id, positionId));
-  if (!position) throw applicationError("Gig position not found.", 404);
+  if (!position) throw applicationError("This musician or vocalist role was not found.", 404);
   return position;
 }
 
 function validateDemos(demoVideos, auditionSongs) {
-  if (!Array.isArray(demoVideos) || demoVideos.length !== 3) {
-    throw applicationError("Exactly three demo videos are required.");
+  if (!Array.isArray(auditionSongs) || auditionSongs.length < 1 || auditionSongs.length > 3 || auditionSongs.some((song) => typeof song !== "string" || !song.trim())) {
+    throw applicationError("This role must request 1 to 3 songs or performance samples.");
   }
-
-  const requiredSongs = new Set(auditionSongs || []);
+  const requiredSongs = new Set(auditionSongs.map((song) => song.trim()));
   const submittedSongs = new Set();
-  if (requiredSongs.size !== 3) throw applicationError("This position does not have a valid three-song audition requirement.");
+  if (requiredSongs.size !== auditionSongs.length) throw applicationError("Each requested song or sample must have a different title.");
+  if (!Array.isArray(demoVideos) || demoVideos.length !== requiredSongs.size) {
+    throw applicationError(`Submit ${requiredSongs.size} demo video${requiredSongs.size === 1 ? "" : "s"}: one for each requested song or performance sample.`);
+  }
 
   for (const demo of demoVideos) {
     if (!demo || typeof demo.songTitle !== "string" || !demo.songTitle.trim() || !demo.videoUrl || !demo.cloudinaryPublicId) {
@@ -36,8 +38,8 @@ function validateDemos(demoVideos, auditionSongs) {
     submittedSongs.add(demo.songTitle.trim());
   }
 
-  if (submittedSongs.size !== 3 || [...submittedSongs].some((song) => !requiredSongs.has(song))) {
-    throw applicationError("Demo song titles must match the three requested audition songs.");
+  if (submittedSongs.size !== requiredSongs.size || [...submittedSongs].some((song) => !requiredSongs.has(song))) {
+    throw applicationError("Submit one matching demo for every requested song or performance sample, without duplicates.");
   }
 }
 
@@ -107,7 +109,7 @@ export function createApplicationService({
     validateDemos(demoVideos, position.auditionSongs);
 
     const existing = await store.findActive(gigId, positionId, talentId);
-    if (existing) throw applicationError("You already have an active application for this position.", 409);
+    if (existing) throw applicationError("You already have a pending or accepted application for this role.", 409);
 
     try {
       return await store.create({
@@ -120,7 +122,7 @@ export function createApplicationService({
         activeApplicationKey: activeApplicationKey(gigId, positionId, talentId),
       });
     } catch (error) {
-      if (error?.code === 11000) throw applicationError("You already have an active application for this position.", 409);
+      if (error?.code === 11000) throw applicationError("You already have a pending or accepted application for this role.", 409);
       throw error;
     }
   }
@@ -205,7 +207,7 @@ export function createApplicationService({
 
       if (status === "accepted") {
         const acceptedCount = await store.countAcceptedForPosition(application.gigId, application.positionId, transaction);
-        if (acceptedCount >= position.slots) throw applicationError("This position has no remaining slots.", 409);
+        if (acceptedCount >= position.slots) throw applicationError("The host has already filled this role.", 409);
       }
 
       const updated = await store.setStatusIfPending(applicationId, status, transaction);

@@ -2,6 +2,8 @@ import { Navigate, createBrowserRouter, useSearchParams } from "react-router-dom
 import { AppShell } from "./AppShell";
 import { NotFoundPage } from "./NotFoundPage";
 import { LandingPage } from "./LandingPage";
+import { ExplorePage } from "./ExplorePage";
+import { AuthModalHost } from "./AuthModalHost";
 import { AboutPage, ContactPage, HelpPage, HowItWorksPage, PrivacyPage, TermsPage } from "./PublicPages";
 import { AdminDashboard, CustomerDashboard, TalentDashboard } from "./DashboardPages";
 import { SettingsPage } from "./SettingsPage";
@@ -29,7 +31,7 @@ function SubscriptionPaymentCallbackPage() {
 
 const protect = (routes, roles) => routes.map((route) => ({ ...route, element: <RoleRoute roles={roles}>{route.element}</RoleRoute> }));
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter([{ element: <AuthModalHost />, children: [
   {
     path: "/",
     element: <AppShell />,
@@ -48,10 +50,11 @@ export const router = createBrowserRouter([
     ],
   },
   { path: "/about", element: <AboutPage /> },
+  { path: "/explore", element: <ExplorePage /> },
   { path: "/how-it-works", element: <HowItWorksPage /> },
   { path: "/help", element: <HelpPage /> },
   { path: "/privacy", element: <PrivacyPage /> },
   { path: "/terms", element: <TermsPage /> },
   { path: "/contact", element: <ContactPage /> },
   { path: "*", element: <NotFoundPage /> },
-]);
+] }]);

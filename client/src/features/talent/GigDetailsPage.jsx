@@ -36,11 +36,11 @@ export function GigDetailsPage() {
           {gig.location && <div><dt className="font-semibold">Event location</dt><dd>{gig.location}</dd></div>}
         </dl>
         <section className="mt-7">
-          <h2 className="text-xl font-bold text-slate-900">Positions needed</h2>
+          <h2 className="text-xl font-bold text-slate-900">Musicians needed</h2>
           <ul className="mt-3 space-y-3">{gig.positions.map((position) => <li className="rounded border border-slate-200 p-4" key={position._id}>
-            <p className="font-semibold capitalize text-slate-900">{position.instrument || position.roleType.replace("_", " ")} · {position.slots} slot{position.slots === 1 ? "" : "s"}</p>
-            <p className="mt-1 text-sm text-slate-600">Audition songs: {position.auditionSongs.join(", ")}</p>
-            <Link className="mt-3 inline-block font-semibold text-indigo-700" to={`/talent/gigs/${gig._id}/positions/${position._id}/apply`}>Apply for this position</Link>
+            <p className="font-semibold capitalize text-slate-900">{position.instrument || position.roleType.replace("_", " ")} · {position.slots} {position.slots === 1 ? "person" : "people"} needed</p>
+            <p className="mt-1 text-sm text-slate-600">Send {position.auditionSongs.length} demo video{position.auditionSongs.length === 1 ? "" : "s"}: {position.auditionSongs.join(", ")}</p>
+            <Link className="mt-3 inline-block font-semibold text-indigo-700" to={`/talent/gigs/${gig._id}/positions/${position._id}/apply`}>Apply for this role</Link>
           </li>)}</ul>
         </section>
       </article>
