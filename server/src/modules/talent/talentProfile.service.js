@@ -42,9 +42,10 @@ function validateProfile(values) {
     throw profileError("Instrumentalists must select at least one instrument.");
   }
 
-  if (!Number.isInteger(values.yearsExperience) || values.yearsExperience < 0) {
-    throw profileError("Years of experience must be a non-negative whole number.");
+  if (!Number.isInteger(values.yearsExperience) || values.yearsExperience < 0 || values.yearsExperience > 100) {
+    throw profileError("Years of experience must be a whole number from 0 to 100.");
   }
+  if (values.bio.length > 2000) throw profileError("Bio must be 2000 characters or fewer.");
 }
 
 export async function getTalentProfile(talentUserId) {

@@ -1,0 +1,56 @@
+:root { --theme-accent: #193e35; --theme-accent-text: #fffefa; --theme-highlight: #d7ae50; --theme-bg: #f8f7f2; --theme-surface: #fffefa; --theme-soft: #ecefe5; --theme-text: #203d33; --theme-muted: #61705f; --theme-border: #d2daca; }
+:root[data-theme="ocean"] { --theme-accent: #235c7b; --theme-highlight: #58a9ba; }
+:root[data-theme="plum"] { --theme-accent: #70486f; --theme-highlight: #c69dce; }
+:root[data-mode="dark"] { color-scheme: dark; --theme-bg: #111a18; --theme-surface: #1b2824; --theme-soft: #25362f; --theme-text: #e4eee6; --theme-muted: #aebfb2; --theme-border: #42564b; --theme-accent: #32694f; }
+:root[data-mode="dark"][data-theme="ocean"] { --theme-bg: #111b23; --theme-surface: #1a2a36; --theme-soft: #243b4b; --theme-border: #3e5a6e; --theme-accent: #316d94; }
+:root[data-mode="dark"][data-theme="plum"] { --theme-bg: #211921; --theme-surface: #302330; --theme-soft: #423042; --theme-border: #654965; --theme-accent: #865780; }
+html, body { background: var(--theme-bg); }
+.theme-toggle { flex: 0 0 auto; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--theme-border); border-radius: 50%; background: var(--theme-surface); color: var(--theme-text); font-size: 22px; cursor: pointer; }
+.theme-toggle:focus-visible, .theme-choice:focus-visible { outline: 3px solid var(--theme-highlight); outline-offset: 3px; }
+.settings-extra { margin-top: 24px; padding: 28px; border: 1px solid var(--theme-border); border-radius: 12px; background: var(--theme-surface); color: var(--theme-text); }
+.settings-extra h2 { font-size: 24px; margin: 0 0 12px; }
+.settings-extra p { line-height: 1.7; color: var(--theme-muted); margin: 10px 0 18px; }
+.appearance-options { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 24px; }
+.theme-choice { min-width: 110px; display: inline-flex; align-items: center; gap: 9px; padding: 12px 16px; border: 1px solid var(--theme-border); border-radius: 8px; background: var(--theme-bg); color: var(--theme-text); cursor: pointer; }
+.theme-choice[aria-pressed="true"] { outline: 2px solid var(--theme-highlight); outline-offset: 2px; font-weight: 700; }
+.theme-swatch { width: 18px; height: 18px; border-radius: 50%; }
+.danger-zone { border-color: #ad6159; }
+.danger-zone summary { cursor: pointer; font-weight: 700; }
+.danger-zone form { display: grid; gap: 16px; margin-top: 18px; max-width: 480px; }
+.danger-zone label { display: grid; gap: 7px; }
+.danger-zone input { padding: 12px; border: 1px solid var(--theme-border); background: var(--theme-bg); border-radius: 6px; color: var(--theme-text); }
+.danger-action { border: 1px solid #a54940; border-radius: 6px; padding: 12px 18px; color: #fff; background: #943f38; font-weight: 700; cursor: pointer; }
+.danger-action:disabled { opacity: .6; cursor: wait; }
+.admin-stat-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 24px 0; }
+.admin-stat { padding: 24px; background: var(--theme-surface); border: 1px solid var(--theme-border); border-radius: 12px; color: var(--theme-text); }
+.admin-stat strong { display: block; font-size: 36px; }
+.admin-role-preview { border: 1px dashed var(--theme-border); border-radius: 10px; padding: 22px; background: var(--theme-bg); }
+.admin-role-preview ul { display: flex; gap: 12px; flex-wrap: wrap; margin: 18px 0; padding: 0; list-style: none; }
+.admin-role-preview li { padding: 10px 14px; border-radius: 6px; background: var(--theme-soft); }
+.admin-gig-list { display: grid; gap: 12px; }
+.admin-gig-list article { display: flex; justify-content: space-between; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--theme-border); }
+/* Accent palettes also apply to the existing public and feature components. */
+html[data-theme] .button-primary, html[data-theme] .auth-submit, html[data-theme] .customer-primary, html[data-theme] .payment-checkout-button, html[data-theme] .bg-indigo-600 { background: var(--theme-accent); color: var(--theme-accent-text); border-color: var(--theme-accent); }
+html[data-theme] .app-sidebar, html[data-theme] .event-brief, html[data-theme] .closing-section, html[data-theme] .quick-action.emphasis { background: var(--theme-accent); }
+html[data-theme] .brand-mark { background: var(--theme-highlight); }
+html[data-mode="dark"] body, html[data-mode="dark"] .site-page, html[data-mode="dark"] .authenticated-app, html[data-mode="dark"] .app-main, html[data-mode="dark"] .bg-slate-50 { background: var(--theme-bg); color: var(--theme-text); }
+html[data-mode="dark"] :is(.app-header, .public-header, .public-mobile-nav, .auth-form-card, .auth-dialog, .settings-card, .settings-state, .customer-card, .customer-empty, .customer-form fieldset, .customer-applicant-group, .customer-applicant-card, .quick-action:not(.emphasis), .bg-white, .dashboard-status, .dashboard-empty, .admin-note) { background: var(--theme-surface); color: var(--theme-text); border-color: var(--theme-border); }
+html[data-mode="dark"] :is(.settings-summary, .customer-advisory, .customer-fee, .customer-payment-action, .subscription-payment-card, .subscription-status, .admin-role-preview, .bg-indigo-50, .bg-slate-100) { background: var(--theme-soft); color: var(--theme-text); border-color: var(--theme-border); }
+html[data-mode="dark"] :is(h1,h2,h3,h4,h5, .brand, .header-action, .public-nav, .footer-links, .app-user strong, .app-header-context strong, .settings-field label, .account-detail dd, .text-slate-900, .text-slate-800, .text-indigo-700, .customer-card a, .auth-field, .auth-switch a, .auth-brand, .button-secondary) { color: var(--theme-text); }
+html[data-mode="dark"] :is(p, .hero-lede, .hero-note, .settings-heading > span, .dashboard-heading > span, .text-slate-600, .text-slate-500, .auth-subtitle, .settings-copy, .settings-talent-note, .payment-checkout small, .app-header-context span) { color: var(--theme-muted); }
+html[data-mode="dark"] :is(input:not([type="radio"]):not([type="checkbox"]), textarea, select, .auth-password, .customer-money-input) { background: var(--theme-bg); color: var(--theme-text); border-color: var(--theme-border); }
+html[data-mode="dark"] :is(input,textarea)::placeholder { color: #99ac9e; }
+html[data-mode="dark"] :is(.customer-status, .status-pill) { background: var(--theme-soft); color: var(--theme-text); }
+html[data-mode="dark"] .customer-banner:not(.customer-error):not(.customer-success) { background: #463c23; color: #f3dda4; border-color: #786537; }
+html[data-mode="dark"] :is(.customer-error, .settings-error, .text-red-700, .text-red-600, .auth-error) { color: #ffc2b8; background: #482a28; }
+html[data-mode="dark"] :is(.customer-success, .settings-success, .text-green-700) { color: #b8e2c4; background: #243f31; }
+html[data-mode="dark"] :is(.customer-success.customer-banner,.bg-green-50) { background: #243f31; }
+html[data-mode="dark"] .customer-danger { color: #ffc2b8; background: #482a28; }
+html[data-mode="dark"] :is(.public-footer,.settings-summary dl,.account-detail,.help-topic,.help-question,.customer-page-heading,.dashboard-heading) { border-color: var(--theme-border); }
+html[data-mode="dark"] :is(.event-card, .role-card:not(.role-card-dark), .help-category, .support-card-grid article, .journey:not(.journey-dark), .contact-panel, .audience-grid article:first-child) { background: var(--theme-surface); border-color: var(--theme-border); color: var(--theme-text); }
+html[data-mode="dark"] :is(.occasion-strip,.support-banner,.help-layout > aside,.contact-team aside,.help-category-toggle[aria-expanded="true"],.help-category-toggle:hover,.help-topics a:hover,.customer-secondary,.page-cta) { background: var(--theme-soft); color: var(--theme-text); }
+html[data-mode="dark"] :is(.help-category-toggle,.help-search label,.help-topics a,.text-link,.customer-secondary,.contact-team li,.feature-list li,.principle-grid article,.faq-list summary) { color: var(--theme-text); }
+html[data-mode="dark"] :is(.sound-stage,.home-final,.audience-grid article:last-child,.journey-dark,.role-card-dark) { background: var(--theme-accent); }
+html[data-mode="dark"] :is(.quick-action.emphasis,.event-brief,.sound-stage,.home-final,.journey-dark,.role-card-dark,.closing-section) :is(h1,h2,h3,h4,p,span,strong,b) { color: #f2f6ee; }
+html[data-mode="dark"] .menu-button span { background: var(--theme-text); }
+@media (max-width: 600px) { .admin-stat-grid { grid-template-columns: 1fr; }.settings-extra { padding: 20px; }.public-header { gap: 12px; }.theme-choice { flex: 1; }.admin-gig-list article { flex-direction: column; } }

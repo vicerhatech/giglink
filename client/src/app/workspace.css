@@ -1,0 +1,58 @@
+/* Workspace-only theme: public pages and status semantics remain independent. */
+.authenticated-app { height: 100dvh; min-height: 0; overflow: hidden; display: flex; flex-direction: column; background: #f8f7f2; }
+.authenticated-app .app-header { flex: 0 0 76px; min-height: 76px; padding: 0 28px; gap: 24px; background: #fffefa; }
+.app-header-brand { width: 192px; flex-shrink: 0; }
+.app-header-context { border-left: 1px solid #dedfd6; padding-left: 24px; display: grid; gap: 2px; }
+.app-header-context span { color: #75817b; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+.app-header-context strong { color: #183b35; font-size: 15px; }
+.app-header-help { font-size: 13px; color: #53685e; text-decoration: none; }
+.authenticated-app .app-user { text-decoration: none; border-left: 1px solid #dedfd6; padding-left: 22px; }
+.authenticated-app .app-layout { flex: 1; min-height: 0; grid-template-columns: 244px minmax(0, 1fr); }
+.authenticated-app .app-sidebar-desktop { min-height: 0; }
+.authenticated-app .app-sidebar { height: 100%; min-height: 0; }
+.authenticated-app .app-main { min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; padding: 36px clamp(20px, 4vw, 64px); }
+.authenticated-app .app-nav-link.active { background: #35564d; box-shadow: inset 3px 0 #dcb652; }
+.authenticated-app .customer-shell { max-width: 1120px; padding: 0; color: #253d35; }
+.authenticated-app .customer-page-heading { align-items: flex-start; padding-bottom: 22px; border-bottom: 1px solid #dedfd6; }
+.authenticated-app .customer-page-heading h1 { color: #173b34; font-size: clamp(26px, 3vw, 36px); letter-spacing: -.035em; }
+.authenticated-app .customer-primary, .authenticated-app .bg-indigo-600 { background: #193e35; color: #fffefa; }
+.authenticated-app .customer-primary:hover, .authenticated-app .bg-indigo-600:hover { background: #2e5748; }
+.authenticated-app .customer-status { background: #e9eddf; color: #3e5547; letter-spacing: .03em; padding: 5px 9px; font-size: 10px; }
+.authenticated-app .customer-card, .authenticated-app .customer-empty, .authenticated-app .customer-applicant-group, .authenticated-app .quick-action { background: #fffefa; border-color: #dcdfd4; border-radius: 12px; }
+.authenticated-app .quick-action.emphasis { background: #193e35; }
+.authenticated-app .customer-card a, .authenticated-app .text-indigo-600, .authenticated-app .text-indigo-700 { color: #245442; }
+.authenticated-app .customer-fee, .authenticated-app .customer-payment-action { background: #edf0e4; color: #294e3c; border: 1px solid #dce2cf; padding: 18px; border-radius: 10px; }
+.authenticated-app .customer-banner:not(.customer-error):not(.customer-success) { background: #fbf3df; border: 1px solid #ecddba; color: #66501e; padding: 18px; }
+.authenticated-app .customer-advisory { background: #eff1e8; color: #455e4e; border-color: #b99238; margin: 18px 0; font-size: 14px; }
+.authenticated-app .customer-field input, .authenticated-app .customer-field textarea, .authenticated-app .customer-field select { background: #fffefa; border-color: #cbd4c7; border-radius: 8px; padding: 12px; }
+.authenticated-app input:focus-visible, .authenticated-app textarea:focus-visible, .authenticated-app select:focus-visible { outline: 2px solid #9a7831; outline-offset: 2px; }
+.authenticated-app .customer-form fieldset { background: #fffefa; border-color: #dce1d4; border-radius: 12px; }
+.payment-checkout { display: grid; justify-items: start; gap: 9px; margin-top: 12px; }
+.payment-checkout-button { display: inline-flex; justify-content: center; align-items: center; min-height: 48px; padding: 12px 22px; border: 1px solid #193e35; border-radius: 7px; background: #193e35; color: #fffefa; font: inherit; font-weight: 700; cursor: pointer; }
+.payment-checkout-button:hover { background: #2e5748; }
+.payment-checkout-button:disabled { opacity: .65; cursor: wait; }
+.payment-checkout small { max-width: 560px; font-size: 12px; line-height: 1.6; color: #626b54; }
+.payment-checkout [role="alert"], .subscription-payment-card [role="alert"] { color: #a33229; }
+.subscription-payment-card { padding: 24px; background: #edf0e4; border: 1px solid #dce2cf; border-radius: 12px; margin: 20px 0; }
+.subscription-payment-card h2 { color: #193e35; font-size: 22px; margin: 0 0 10px; }
+.subscription-payment-card p { color: #53624d; line-height: 1.7; margin: 8px 0 14px; }
+.authenticated-app .text-slate-900, .authenticated-app .text-slate-800 { color: #203d33; }
+.authenticated-app .text-slate-600, .authenticated-app .text-slate-500 { color: #61705f; }
+.authenticated-app .border-slate-200, .authenticated-app .border-slate-300, .authenticated-app .border-indigo-300 { border-color: #d2daca; }
+.authenticated-app .bg-white { background-color: #fffefa; }
+.authenticated-app .bg-indigo-50 { background-color: #eff1e5; }
+.authenticated-app .dashboard-heading { padding: 26px 0; border-bottom: 1px solid #dce1d4; margin-bottom: 24px; }
+.dashboard-load-error { padding: 18px; background: #fbf0e8; border: 1px solid #e7c9b9; border-radius: 8px; }
+.dashboard-load-error button { text-decoration: underline; cursor: pointer; }
+@media (max-width: 760px) {
+  .authenticated-app .app-header { flex-basis: 64px; min-height: 64px; padding: 0 16px; gap: 14px; }
+  .app-header-brand { width: auto; }
+  .app-header-context, .app-header-help { display: none; }
+  .authenticated-app .app-user { padding-left: 0; border: 0; }
+  .authenticated-app .app-user > div:last-child { display: none; }
+  .authenticated-app .app-layout { display: flex; }
+  .authenticated-app .app-main { width: 100%; padding: 24px 16px; }
+  .authenticated-app .app-sidebar-drawer { height: 100dvh; }
+  .authenticated-app .customer-actions { width: 100%; }
+  .payment-checkout-button { width: 100%; }
+}

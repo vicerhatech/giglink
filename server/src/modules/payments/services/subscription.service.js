@@ -2,6 +2,13 @@ import { Subscription, SUBSCRIPTION_AMOUNT } from "../models/subscription.model.
 
 export const SUBSCRIPTION_DURATION_DAYS = 30;
 
+export async function cancelTalentSubscription(talentUserId) {
+  await Subscription.updateMany(
+    { talentId: talentUserId, status: "active" },
+    { $set: { status: "cancelled", cancelledAt: new Date() } },
+  );
+}
+
 function addSubscriptionDuration(startsAt) {
   const expiresAt = new Date(startsAt);
   expiresAt.setDate(expiresAt.getDate() + SUBSCRIPTION_DURATION_DAYS);

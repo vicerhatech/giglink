@@ -8,10 +8,10 @@ export function createApplicationController(applicationService) {
           throw error;
         }
         const application = await applicationService.submitApplication({
+          ...request.body,
           talent: request.user,
           gigId: request.params.gigId,
           positionId: request.params.positionId,
-          ...request.body,
         });
         response.status(201).json({
           success: true,

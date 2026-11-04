@@ -7,11 +7,12 @@ import { AuthFormLayout, AuthField, AuthPasswordField } from "./AuthFormLayout";
 export function RegisterPage({ initialRole, onAuthenticated } = {}) {
   const [searchParams] = useSearchParams();
   const requestedRole = initialRole ?? searchParams.get("role");
-  const [values, setValues] = useState(() => ({ name: "", email: "", phone: "", password: "", role: requestedRole === "talent" ? "talent" : "customer" }));
+  const [values, setValues] = useState(() => ({ name: "", email: "", phone: "", password: "", confirmPassword: "", role: requestedRole === "talent" ? "talent" : "customer" }));
   const [errors, setErrors] = useState({});
   const [apiError, setApiError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmation, setShowConfirmation] = useState(false);
   const { register, getErrorMessage } = useAuth();
   const navigate = useNavigate();
   function updateField(event) {
@@ -26,7 +27,8 @@ export function RegisterPage({ initialRole, onAuthenticated } = {}) {
     if (Object.keys(validationErrors).length) return;
     setIsSubmitting(true);
     try {
-      const user = await register(values);
+      const { confirmPassword, ...registration } = values;
+      const user = await register(registration);
       onAuthenticated?.();
       navigate(user.role === "customer" ? "/customer/dashboard" : user.role === "talent" ? "/talent/dashboard" : "/", { replace: true });
     } catch (error) {
@@ -39,6 +41,7 @@ export function RegisterPage({ initialRole, onAuthenticated } = {}) {
       <AuthField label="Email" name="email" type="email" placeholder="you@example.com" value={values.email} onChange={updateField} error={errors.email} autoComplete="email" />
       <AuthField label="Phone" name="phone" type="tel" placeholder="0800 000 0000" value={values.phone} onChange={updateField} error={errors.phone} autoComplete="tel" />
       <AuthPasswordField name="password" placeholder="Create a secure password" value={values.password} onChange={updateField} error={errors.password} autoComplete="new-password" visible={showPassword} onToggle={() => setShowPassword((visible) => !visible)} />
+      <AuthPasswordField label="Confirm password" name="confirmPassword" placeholder="Enter your password again" value={values.confirmPassword} onChange={updateField} error={errors.confirmPassword} autoComplete="new-password" visible={showConfirmation} onToggle={() => setShowConfirmation((visible) => !visible)} />
       <label className="auth-field"><span>I am joining as</span><select name="role" value={values.role} onChange={updateField} aria-invalid={Boolean(errors.role)} aria-describedby={errors.role ? "auth-role-error" : undefined}><option value="customer">Customer / Event host</option><option value="talent">Talent</option></select>{errors.role && <span className="auth-field-error" id="auth-role-error">{errors.role}</span>}</label>
       {apiError && <p role="alert" aria-live="assertive" className="auth-error">{apiError}</p>}
       <button type="submit" disabled={isSubmitting} className="auth-submit">{isSubmitting ? "Creating account…" : "Create account"}</button>

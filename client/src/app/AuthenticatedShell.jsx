@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, NavLink, Outlet, useLocation } from "react-router-dom";
+import "./workspace.css";
+import { ThemeToggle } from "./ThemeProvider";
 
 const navigation = {
   customer: [
@@ -57,8 +59,14 @@ function Sidebar({ role, close, onLogout }) {
 // enforce role authorization through the backend and route guards.
 export function AuthenticatedShell({ user, onLogout, children }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { pathname } = useLocation();
+  const mainRef = useRef(null);
   const role = navigation[user?.role] ? user.role : "talent";
   const closeDrawer = () => setDrawerOpen(false);
+  useEffect(() => {
+    mainRef.current?.scrollTo(0, 0);
+    setDrawerOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     function onKeyDown(event) { if (event.key === "Escape") closeDrawer(); }
@@ -72,9 +80,12 @@ export function AuthenticatedShell({ user, onLogout, children }) {
   return <div className="authenticated-app">
     <header className="app-header">
       <button className="menu-button" aria-controls="app-sidebar" aria-expanded={drawerOpen} aria-label={drawerOpen ? "Close navigation" : "Open navigation"} onClick={() => setDrawerOpen((open) => !open)} type="button"><span /><span /><span /></button>
-      <div className="app-header-mobile-brand"><Brand /></div>
+      <div className="app-header-brand"><Brand /></div>
+      <div className="app-header-context"><span>Your workspace</span><strong>{[...(navigation[role] || [])].sort((a, b) => b[1].length - a[1].length).find(([, to]) => pathname === to || pathname.startsWith(`${to}/`))?.[0] || "Gig details"}</strong></div>
       <div className="app-header-spacer" />
-      <div className="app-user"><div className="app-avatar" aria-hidden="true">{initials}</div><div><strong>{displayName}</strong><span>{role}</span></div></div>
+      <ThemeToggle />
+      <Link className="app-header-help" to="/help">Help centre</Link>
+      <Link to="/settings" className="app-user" aria-label="Open account settings"><div className="app-avatar" aria-hidden="true">{initials}</div><div><strong>{displayName}</strong><span>{role === "customer" ? "Event host" : role}</span></div></Link>
     </header>
     <div className="app-layout">
       <div className="app-sidebar-desktop"><Sidebar role={role} close={() => {}} onLogout={onLogout} /></div>
@@ -82,7 +93,7 @@ export function AuthenticatedShell({ user, onLogout, children }) {
         <button className="drawer-backdrop" aria-label="Close navigation" onClick={closeDrawer} tabIndex={drawerOpen ? 0 : -1} type="button" />
         <div id="app-sidebar" className="app-sidebar-drawer" role="dialog" aria-modal="true" aria-label="Navigation"><Sidebar role={role} close={closeDrawer} onLogout={onLogout} /></div>
       </div>
-      <main className="app-main">{children || <Outlet context={{ user, role }} />}</main>
+      <main className="app-main" ref={mainRef}>{children || <Outlet context={{ user, role }} />}</main>
     </div>
   </div>;
 }

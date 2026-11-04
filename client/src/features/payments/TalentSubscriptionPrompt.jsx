@@ -9,7 +9,8 @@ export function TalentSubscriptionPrompt({ children = "Subscribe for ₦5,000/mo
     setError("");
     setIsLoading(true);
     try {
-      const response = await api.post("/payments/subscription/initialize");
+      const response = await api.post("/payments/subscription/initialize", undefined, { timeout: 20000 });
+      if (!response.data?.data?.authorizationUrl) throw new Error("Checkout URL missing.");
       window.location.assign(response.data.data.authorizationUrl);
     } catch (requestError) {
       setError(requestError.response?.data?.message || "Unable to initialize your subscription payment.");
@@ -19,11 +20,11 @@ export function TalentSubscriptionPrompt({ children = "Subscribe for ₦5,000/mo
   }
 
   return (
-    <section>
+    <section className="subscription-payment-card">
       <h2>Keep access to new Paid gigs</h2>
       <p>After your first accepted Paid gig, subscribe for ₦5,000/month to browse new Paid gigs.</p>
       <p>Free gigs remain available, and your already accepted Paid gig stays accessible.</p>
-      <button type="button" onClick={beginSubscription} disabled={isLoading}>
+      <button className="payment-checkout-button" type="button" onClick={beginSubscription} disabled={isLoading}>
         {isLoading ? "Preparing payment…" : children}
       </button>
       {error && <p role="alert">{error}</p>}

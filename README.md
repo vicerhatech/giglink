@@ -1,5 +1,7 @@
 # GigLink
 
+Account deletion, subscription cancellation, appearance themes and the read-only Admin role preview are documented in [Account and appearance release notes](docs/ACCOUNT_APPEARANCE_RELEASE.md).
+
 ## MERN Stack MVP Project Specification
 
 GigLink is a responsive web marketplace that connects event hosts/customers with instrumentalists and backup vocalists. Customers post free or paid gigs, specify the musicians they need and 1–3 songs or performance samples per role, and review one matching demo video per request. Talents browse eligible gigs, apply for a role, and customers accept or reject applicants.
@@ -396,7 +398,7 @@ Unique business rule: one talent may submit at most one active application to th
   talentId: ObjectId,
   amount: 5000,
   paymentReference: String,
-  status: "active" | "expired",
+  status: "active" | "expired" | "cancelled",
   startsAt: Date,
   expiresAt: Date,
   createdAt: Date,

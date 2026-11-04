@@ -20,6 +20,7 @@ export function nairaToKobo(amountInNaira) {
 export function createPaystackClient({
   secretKey = process.env.PAYSTACK_SECRET_KEY,
   fetchImplementation = globalThis.fetch,
+  timeoutMs = 15000,
 } = {}) {
   if (!secretKey) {
     throw new PaystackRequestError("Paystack is not configured on the server.", 503);
@@ -31,28 +32,33 @@ export function createPaystackClient({
 
   async function request(path, options = {}) {
     let response;
+    let body;
     try {
       response = await fetchImplementation(`${PAYSTACK_BASE_URL}${path}`, {
         ...options,
+        signal: AbortSignal.timeout(timeoutMs),
         headers: {
           Authorization: `Bearer ${secretKey}`,
           "Content-Type": "application/json",
           ...options.headers,
         },
       });
-    } catch {
+      try {
+        body = await response.json();
+      } catch (error) {
+        if (error.name === "AbortError" || error.name === "TimeoutError") throw error;
+        throw new PaystackRequestError("Paystack returned an invalid response.");
+      }
+    } catch (error) {
+      if (error instanceof PaystackRequestError) throw error;
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        throw new PaystackRequestError("Paystack took too long to respond. Please try again.", 504);
+      }
       throw new PaystackRequestError("Unable to reach Paystack.");
     }
 
-    let body;
-    try {
-      body = await response.json();
-    } catch {
-      throw new PaystackRequestError("Paystack returned an invalid response.");
-    }
-
-    if (!response.ok || !body.status) {
-      throw new PaystackRequestError(body.message || "Paystack request failed.");
+    if (!response.ok || !body?.status || !body.data) {
+      throw new PaystackRequestError(body?.message || "Paystack request failed.");
     }
 
     return body.data;

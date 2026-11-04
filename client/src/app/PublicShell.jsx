@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { ThemeToggle } from "./ThemeProvider";
 
 function Arrow() {
   return <span aria-hidden="true" className="landing-arrow">→</span>;
@@ -11,7 +12,7 @@ export function PublicHeader() {
   return <header className="public-header">
     <Link className="brand" to="/" aria-label="GigLink home"><span className="brand-mark" aria-hidden="true"><i /><i /><i /></span><span>GigLink</span></Link>
     <nav className="public-nav" aria-label="Main navigation"><Link to="/explore">Explore</Link><Link to="/how-it-works">How it works</Link><Link to="/about">About</Link><Link to="/contact">Contact us</Link><Link to="/help">Help</Link></nav>
-    <Link className="header-action" to="/register">Join GigLink <Arrow /></Link>
+    <ThemeToggle /><Link className="header-action" to="/register">Join GigLink <Arrow /></Link>
     <button className="public-menu-button" type="button" aria-controls="public-mobile-nav" aria-expanded={mobileNavOpen} aria-label={mobileNavOpen ? "Close navigation menu" : "Open navigation menu"} onClick={() => setMobileNavOpen((open) => !open)}><span /><span /><span /></button>
     {mobileNavOpen && <nav id="public-mobile-nav" className="public-mobile-nav" aria-label="Mobile navigation"><Link onClick={closeMobileNav} to="/explore">Explore</Link><Link onClick={closeMobileNav} to="/how-it-works">How it works</Link><Link onClick={closeMobileNav} to="/about">About</Link><Link onClick={closeMobileNav} to="/contact">Contact us</Link><Link onClick={closeMobileNav} to="/help">Help</Link><Link onClick={closeMobileNav} to="/login">Sign in</Link><Link onClick={closeMobileNav} to="/register">Join GigLink</Link></nav>}
   </header>;
