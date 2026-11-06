@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Payment } from "../models/payment.model.js";
 import { getExpectedPaymentAmount } from "./payment-policy.service.js";
 import { PAYSTACK_CURRENCY, nairaToKobo } from "./paystack.client.js";
+import { matchesVerifiedAmount } from "./verified-amount.js";
 import {
   createOrRenewTalentSubscription,
   hasActiveTalentSubscription,
@@ -193,10 +194,13 @@ export function createTalentSubscriptionPaymentService({
       const transaction = await paystackClient.verifyTransaction(reference);
       const matchesPayment = transaction.status === "success"
         && transaction.reference === payment.reference
-        && Number(transaction.amount) === nairaToKobo(expectedAmount)
+        && matchesVerifiedAmount(transaction, nairaToKobo(expectedAmount))
         && String(transaction.currency).toUpperCase() === PAYSTACK_CURRENCY;
 
       if (!matchesPayment) {
+        if (transaction.status === "success") {
+          throw new TalentSubscriptionPaymentError("Paystack reports a successful payment, but its details do not match this subscription fee. Do not pay again; contact support with your payment reference.", 409);
+        }
         const failedPayment = await paymentRepository.findOneAndUpdate(
           { reference, userId: talentId, status: "initialized" },
           { $set: { status: "failed" } },

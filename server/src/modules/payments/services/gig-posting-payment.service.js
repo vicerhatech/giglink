@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Payment } from "../models/payment.model.js";
 import { getExpectedPaymentAmount } from "./payment-policy.service.js";
 import { PAYSTACK_CURRENCY, nairaToKobo } from "./paystack.client.js";
+import { matchesVerifiedAmount } from "./verified-amount.js";
 
 export class GigPostingPaymentError extends Error {
   constructor(message, statusCode = 400) {
@@ -179,10 +180,14 @@ export function createGigPostingPaymentService({
       const transaction = await paystackClient.verifyTransaction(reference);
       const transactionSucceeded = transaction.status === "success";
       const matchesPayment = transaction.reference === payment.reference
-        && Number(transaction.amount) === nairaToKobo(payment.amount)
+        && matchesVerifiedAmount(transaction, nairaToKobo(payment.amount))
         && String(transaction.currency).toUpperCase() === PAYSTACK_CURRENCY;
 
-      if (!transactionSucceeded || !matchesPayment) {
+      if (transactionSucceeded && !matchesPayment) {
+        throw new GigPostingPaymentError("Paystack reports a successful payment, but its details do not match this posting fee. Do not pay again; contact support with your payment reference.", 409);
+      }
+
+      if (!transactionSucceeded) {
         const failedPayment = await paymentRepository.findOneAndUpdate(
           { reference, userId: customerId, status: "initialized" },
           { $set: { status: "failed" } },
