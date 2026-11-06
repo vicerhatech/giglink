@@ -21,8 +21,8 @@ function integrationError(message, statusCode = 403) {
 
 export function createGigIntegrationRepository(model = Gig) {
   return {
-    listPublishedGigs({ gigTypes }) {
-      return model.find({ publicationStatus: "published", gigType: { $in: gigTypes } }).sort({ createdAt: -1 });
+    listPublishedGigs({ gigTypes, roleFilter = {} }) {
+      return model.find({ publicationStatus: "published", gigType: { $in: gigTypes }, ...roleFilter }).sort({ createdAt: -1 });
     },
     findPublishedGigById(gigId, options) {
       return withSession(model.findOne({ _id: gigId, publicationStatus: "published" }), options);

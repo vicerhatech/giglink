@@ -1,3 +1,5 @@
+import { buildEventRoleFilter } from "../gigs/event-role-filter.js";
+
 function discoveryError(message, statusCode = 400) {
   const error = new Error(message);
   error.statusCode = statusCode;
@@ -79,10 +81,10 @@ export function createTalentDiscoveryService({
   }
 
   return {
-    async listGigs(talent) {
+    async listGigs(talent, filters = {}) {
       const access = await accessFor(talent);
       const gigTypes = access.paidGigAccess ? ["free", "paid"] : ["free"];
-      const gigs = await gigRepository.listPublishedGigs({ gigTypes });
+      const gigs = await gigRepository.listPublishedGigs({ gigTypes, roleFilter: buildEventRoleFilter(filters) });
 
       return {
         gigs: gigs.map((gig) => publicGig(gig)),

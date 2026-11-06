@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Gig } from "./gig.model.js";
+import { buildEventRoleFilter } from "./event-role-filter.js";
 
 // Public previews deliberately exclude exact location, owner identity, payment
 // records, compensation, descriptions, and audition/application details.
@@ -18,7 +19,7 @@ export function createPublicGigRouter({ model = Gig } = {}) {
     try {
       const page = Math.max(1, Math.min(100000, Number.parseInt(request.query.page, 10) || 1));
       const limit = 12;
-      const filter = { publicationStatus: "published" };
+      const filter = { publicationStatus: "published", ...buildEventRoleFilter(request.query) };
       if (["free", "paid"].includes(request.query.type)) filter.gigType = request.query.type;
       const [rows, total] = await Promise.all([
         model.find(filter).select("title eventType eventDate gigType positions.roleType positions.instrument").sort({ createdAt: -1, _id: -1 }).skip((page - 1) * limit).limit(limit).lean(),

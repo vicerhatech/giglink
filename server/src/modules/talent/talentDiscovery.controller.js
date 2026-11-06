@@ -11,7 +11,7 @@ export function createTalentDiscoveryController(discoveryService) {
   return {
     async listGigs(request, response, next) {
       try {
-        const data = await discoveryService.listGigs(requireTalent(request));
+        const data = await discoveryService.listGigs(requireTalent(request), request.query);
         response.status(200).json({
           success: true,
           message: "Available gigs retrieved.",

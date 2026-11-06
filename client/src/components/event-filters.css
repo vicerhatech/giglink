@@ -1,0 +1,7 @@
+.event-role-filters { display: grid; grid-template-columns: minmax(150px, 1fr) minmax(200px, 1.3fr) auto; gap: 16px; align-items: end; padding: 20px; margin: 20px 0 28px; border: 1px solid var(--theme-border); border-radius: 12px; background: var(--theme-surface); color: var(--theme-text); }
+.event-role-filters label { display: grid; gap: 8px; min-width: 0; font-size: .85rem; font-weight: 650; }
+.event-role-filters select, .event-role-filters input { width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; border: 1px solid var(--theme-border); border-radius: 5px; background: var(--theme-surface); color: var(--theme-text); font: inherit; }
+.event-role-filters input:disabled { opacity: .65; cursor: not-allowed; }
+.event-filter-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.event-role-filters > p { grid-column: 1 / -1; margin: 0; color: var(--theme-muted); font-size: .78rem; line-height: 1.5; }
+@media (max-width: 760px) { .event-role-filters { grid-template-columns: 1fr; padding: 16px; }.event-filter-actions > button { flex: 1; } }
